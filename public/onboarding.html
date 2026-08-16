@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>DSA Tracker — Setup</title>
+  <meta name="description" content="Set up your DSA progress tracker with your goals and profiles.">
+  
+  <!-- PWA / Mobile -->
+  <meta name="theme-color" content="#080c18">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DSA Tracker">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="/manifest.json">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23080c18'/><text y='.9em' font-size='90'>🎯</text></svg>">
+</head>
+<body>
+  <div class="onboarding-page">
+    <div class="onboarding-container">
+      <div class="onboarding-card">
+        <!-- Step Progress -->
+        <div class="step-progress">
+          <div class="step-dot active" id="dot1"></div>
+          <div class="step-line" id="line1"></div>
+          <div class="step-dot" id="dot2"></div>
+          <div class="step-line" id="line2"></div>
+          <div class="step-dot" id="dot3"></div>
+          <div class="step-line" id="line3"></div>
+          <div class="step-dot" id="dot4"></div>
+        </div>
+
+        <!-- Step 1: Profile Links -->
+        <div class="onboarding-step active" id="step1">
+          <h2>👋 Welcome!</h2>
+          <p class="step-desc">Let's connect your coding profiles to track progress automatically.</p>
+
+          <div class="form-group">
+            <label for="lcUsername">LeetCode Username</label>
+            <input type="text" id="lcUsername" placeholder="e.g. MYNK_CHOMIYA">
+            <div id="lcVerify"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="ghUsername">GitHub Username</label>
+            <input type="text" id="ghUsername" placeholder="e.g. MYNKCHOMIYA">
+          </div>
+
+          <div class="form-group">
+            <label for="ghStriverRepo">GitHub Striver DSA Repo Name</label>
+            <input type="text" id="ghStriverRepo" placeholder="e.g. STRIVER-DSA">
+          </div>
+
+          <div class="form-group">
+            <label for="ghLeetcodeRepo">GitHub LeetCode Repo Name <span style="color:var(--text-muted)">(optional)</span></label>
+            <input type="text" id="ghLeetcodeRepo" placeholder="e.g. LEETCODE">
+          </div>
+
+          <div class="onboarding-actions">
+            <div></div>
+            <button class="btn btn-primary" style="width:auto" onclick="goToStep(2)">Next →</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Goals -->
+        <div class="onboarding-step" id="step2">
+          <h2>🎯 Set Your Goals</h2>
+          <p class="step-desc">Define your daily target and timeline. You can change these anytime.</p>
+
+          <div class="form-group">
+            <label>Daily Target (questions per day)</label>
+            <div class="slider-container">
+              <input type="range" id="dailyTarget" min="1" max="20" value="5" oninput="updateTargetPreview()">
+              <div class="slider-value">
+                <span>1/day</span>
+                <span class="value-highlight" id="targetValue">5</span>
+                <span>20/day</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="startDate">When did you start?</label>
+            <input type="date" id="startDate">
+          </div>
+
+          <div class="form-group">
+            <label for="targetDate">Target Completion Date</label>
+            <input type="date" id="targetDate">
+          </div>
+
+          <div class="preview-card" id="goalPreview">
+            At <span class="highlight" id="previewRate">5</span> questions/day, you'll finish <span class="highlight">474</span> problems in approximately <span class="highlight" id="previewDays">95</span> days.
+          </div>
+
+          <div class="onboarding-actions">
+            <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
+            <button class="btn btn-primary" style="width:auto" onclick="goToStep(3)">Next →</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Current Progress -->
+        <div class="onboarding-step" id="step3">
+          <h2>📊 Current Progress</h2>
+          <p class="step-desc">How many Striver A2Z problems have you already solved?</p>
+
+          <div class="form-group">
+            <label for="solvedCount">Problems Already Solved</label>
+            <input type="number" id="solvedCount" value="0" min="0" max="474" placeholder="0">
+            <p style="font-size:12px; color:var(--text-muted); margin-top:4px">Check your TakeUforward profile or count from your GitHub repo</p>
+          </div>
+
+          <div class="form-group">
+            <label for="totalProblems">Total Sheet Problems</label>
+            <input type="number" id="totalProblems" value="474" min="1" placeholder="474">
+            <p style="font-size:12px; color:var(--text-muted); margin-top:4px">Default: 474 (Striver A2Z). Change if using a different sheet.</p>
+          </div>
+
+          <div class="onboarding-actions">
+            <button class="btn btn-secondary" onclick="goToStep(2)">← Back</button>
+            <button class="btn btn-primary" style="width:auto" onclick="goToStep(4)">Next →</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Confirmation -->
+        <div class="onboarding-step" id="step4">
+          <h2>🚀 Ready to Go!</h2>
+          <p class="step-desc">Here's a summary of your setup. You can always change these in Settings.</p>
+
+          <div class="summary-grid" id="summaryGrid">
+            <!-- Filled by JS -->
+          </div>
+
+          <div class="onboarding-actions">
+            <button class="btn btn-secondary" onclick="goToStep(3)">← Back</button>
+            <button class="btn btn-primary" style="width:auto" id="finishBtn" onclick="completeOnboarding()">
+              Start Tracking 🚀
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/data.js"></script>
+  <script src="/js/onboarding.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
