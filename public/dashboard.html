@@ -161,8 +161,14 @@
             <button class="chart-filter-btn active" onclick="filterChartByDates()" style="border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:4px 10px">Apply</button>
           </div>
         </div>
-        <div class="chart-container" style="height:280px">
+        <div class="chart-container" style="height:260px; margin-bottom:16px;">
           <canvas id="projectionChart"></canvas>
+        </div>
+        <!-- Zoom Slider -->
+        <div class="chart-zoom-slider" style="display:flex; align-items:center; gap:12px; padding:0 8px;">
+          <span style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Zoom</span>
+          <input type="range" id="chartZoomSlider" min="10" max="100" value="100" oninput="zoomChartWithSlider(this.value)" style="flex:1;">
+          <span style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase;">All</span>
         </div>
       </div>
 

@@ -136,10 +136,32 @@ function _drawProjectionChart(idealData, actualData, projectedData) {
 }
 
 // ── Chart Timeline Filters ──
+function zoomChartWithSlider(percent) {
+  if (!_fullIdealData || _fullIdealData.length === 0) return;
+  
+  // Clear button active states since we are using custom zoom
+  document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+  
+  const totalPoints = _fullIdealData.length;
+  // min zoom = 10% (or at least 7 points), max = 100%
+  const pct = parseInt(percent);
+  let pointsToShow = Math.max(7, Math.floor((pct / 100) * totalPoints));
+  
+  const slicedIdeal = _fullIdealData.slice(-pointsToShow);
+  const cutoffLabel = slicedIdeal[0].label;
+  
+  const filter = (arr) => arr.filter(d => d.label >= cutoffLabel);
+  _drawProjectionChart(filter(_fullIdealData), filter(_fullActualData), filter(_fullProjectedData));
+}
+
 function filterChart(range, btn) {
   // Update active button
   document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+  
+  // Reset slider visual to max
+  const slider = document.getElementById('chartZoomSlider');
+  if (slider) slider.value = 100;
 
   if (!_fullIdealData.length) return;
 
@@ -163,6 +185,10 @@ function filterChart(range, btn) {
 }
 
 function filterChartByDates() {
+  // Reset slider visual to max
+  const slider = document.getElementById('chartZoomSlider');
+  if (slider) slider.value = 100;
+
   const startEl = document.getElementById('chartStartDate');
   const endEl = document.getElementById('chartEndDate');
   if (!startEl || !endEl) return;
