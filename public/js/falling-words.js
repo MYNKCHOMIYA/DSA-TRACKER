@@ -37,6 +37,16 @@
     "Monotonic Stack",
     "Prefix Sum",
     "Matrix Traversal",
+    "Fenwick Tree",
+    "Ternary Search",
+    "A* Search",
+    "B-Tree",
+    "AVL Tree",
+    "Red-Black Tree",
+    "Suffix Array",
+    "Rabin-Karp",
+    "KMP Algorithm",
+    "Z-Algorithm",
 
     // Motivational Quotes
     "Keep Grinding",
@@ -61,9 +71,13 @@
     "Learn, Build, Repeat",
     "The Obstacle Is The Way",
     "No Excuses",
+    "Hard work beats talent",
+    "1% Better Every Day",
+    "Enjoy the journey",
+    "Make it work, make it right, make it fast",
   ];
 
-  // Elegant Grayscale / Silver Colors
+  // Elegant Grayscale / Silver Colors (Default)
   const colors = [
     { fill: "#ffffff", glow: "rgba(255, 255, 255, 0.5)" },
     { fill: "#f8fafc", glow: "rgba(248, 250, 252, 0.3)" },
@@ -86,39 +100,51 @@
   window.addEventListener("resize", resize);
   resize();
 
-  // Create a continuous list of credits
-  const credits = [];
-  const SCROLL_SPEED = 0.5; // Very slow, elegant scroll
-  const LINE_HEIGHT = 60;
+  // Track Mouse Position
+  let mouseX = -1000;
+  let mouseY = -1000;
+  window.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
 
-  // Boundary definition (Keep it on the left side, max 35% of screen width)
-  // to avoid crossing over the face or the login form.
+  // Create a continuous list of credits
+  let credits = [];
+  const SCROLL_SPEED = 0.5; // Very slow, elegant scroll
+  const LINE_HEIGHT = 80;
+  let isAnimating = true;
+
+  function randomRGB() {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgb(${r}, ${g}, ${b})`;
+  }
 
   function initCredits() {
-    let currentY = h; // Start at the bottom of the screen
+    credits = [];
+    // We want a lot of items spread across the entire width and height
+    const totalItems = 150;
+    let currentY = 0;
 
-    // Shuffle words for random order
-    const shuffled = [...words].sort(() => Math.random() - 0.5);
-
-    for (let i = 0; i < shuffled.length; i++) {
+    for (let i = 0; i < totalItems; i++) {
+      const text = words[Math.floor(Math.random() * words.length)];
       credits.push({
-        text: shuffled[i],
-        y: currentY,
-        color: colors[i % colors.length], // Cycle through elegant colors
-        size: Math.random() > 0.8 ? 24 : 18, // Occasionally larger text
-        xOffset: Math.random() * 40, // Slight random horizontal indent
+        text: text,
+        y: Math.random() * h * 2 - h, // Spread vertically
+        x: Math.random() * w, // Spread horizontally across full screen
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: Math.random() > 0.8 ? 24 : 16,
+        hoveredColor: null, // Will store random color when hovered
       });
-      currentY += LINE_HEIGHT + Math.random() * 40; // Random spacing between lines
     }
   }
 
   initCredits();
 
   function animate() {
+    if (!isAnimating) return;
     ctx.clearRect(0, 0, w, h);
-
-    const boundaryWidth = Math.min(w * 0.35, 400); // Max 35% of screen, capped at 400px
-    const startX = 40; // 40px from the left edge
 
     for (let i = 0; i < credits.length; i++) {
       let credit = credits[i];
@@ -130,39 +156,60 @@
       if (credit.y > -100 && credit.y < h + 100) {
         ctx.save();
 
+        // Measure text for accurate hover detection
+        ctx.font = `${credit.size === 24 ? "bold" : "normal"} ${credit.size}px 'Space Grotesk', sans-serif`;
+        const textWidth = ctx.measureText(credit.text).width;
+
+        // Check hover collision (approximate bounding box)
+        const isHovered =
+          mouseX >= credit.x &&
+          mouseX <= credit.x + textWidth &&
+          mouseY >= credit.y - credit.size &&
+          mouseY <= credit.y;
+
+        if (isHovered) {
+          if (!credit.hoveredColor) {
+            const rgb = randomRGB();
+            credit.hoveredColor = { fill: rgb, glow: rgb };
+          }
+        } else {
+          // Slowly lose the hover color if not hovered (or just instantly snap back)
+          // For simplicity, snap back to default:
+          credit.hoveredColor = null;
+        }
+
         // Fade in from bottom and fade out at top
         let opacity = 1;
         if (credit.y > h - 150) {
-          opacity = (h - credit.y) / 150; // Fade in at bottom
+          opacity = (h - credit.y) / 150;
         } else if (credit.y < 150) {
-          opacity = credit.y / 150; // Fade out at top
+          opacity = credit.y / 150;
         }
 
         ctx.globalAlpha = Math.max(0, opacity);
 
-        ctx.font = `${credit.size === 24 ? "bold" : "normal"} ${credit.size}px 'Space Grotesk', sans-serif`;
-        ctx.fillStyle = credit.color.fill;
+        const activeColor = credit.hoveredColor || credit.color;
 
-        if (credit.color.glow !== "transparent") {
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = credit.color.glow;
+        ctx.fillStyle = activeColor.fill;
+
+        if (activeColor.glow !== "transparent") {
+          ctx.shadowBlur = isHovered ? 20 : 10;
+          ctx.shadowColor = activeColor.glow;
         }
 
-        // Align left within the boundary
         ctx.textAlign = "left";
-        ctx.fillText(credit.text, startX + credit.xOffset, credit.y);
+        ctx.fillText(credit.text, credit.x, credit.y);
 
         ctx.restore();
       }
 
       // Recycle to bottom if it goes off top
       if (credit.y < -100) {
-        // Find the lowest Y currently in the array
-        let lowestY = Math.max(...credits.map((c) => c.y));
-        credit.y = Math.max(lowestY, h) + LINE_HEIGHT + Math.random() * 40;
-        // Randomize position and color again
-        credit.xOffset = Math.random() * 40;
+        credit.y = h + Math.random() * 200;
+        credit.x = Math.random() * w; // New random horizontal position
         credit.color = colors[Math.floor(Math.random() * colors.length)];
+        credit.text = words[Math.floor(Math.random() * words.length)];
+        credit.hoveredColor = null;
       }
     }
 
@@ -170,4 +217,19 @@
   }
 
   animate();
+
+  // Toggle Button Logic
+  const toggleBtn = document.getElementById("toggle-anim-btn");
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      isAnimating = !isAnimating;
+      if (isAnimating) {
+        animate();
+        toggleBtn.textContent = "Toggle Credits";
+      } else {
+        ctx.clearRect(0, 0, w, h);
+        toggleBtn.textContent = "Resume Credits";
+      }
+    });
+  }
 })();

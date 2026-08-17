@@ -114,10 +114,10 @@ a:hover {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   position: relative;
   overflow: hidden;
-  padding: 20px 2% 20px 2px;
+  padding: 20px;
   background:
     linear-gradient(
       135deg,
@@ -148,9 +148,9 @@ a:hover {
   max-width: 440px;
 }
 .auth-card {
-  background: rgba(8, 4, 20, 0.82);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
+  background: rgba(8, 4, 20, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: var(--radius-2xl);
   padding: 44px 40px;
