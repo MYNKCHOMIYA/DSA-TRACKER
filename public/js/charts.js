@@ -6,9 +6,6 @@ let projectionChartInstance = null;
 let _fullIdealData = [],
   _fullActualData = [],
   _fullProjectedData = [];
-let _activeIdealData = [],
-  _activeActualData = [],
-  _activeProjectedData = [];
 
 // Chart.js global defaults
 Chart.defaults.color = "#6b6280";
@@ -20,9 +17,6 @@ function renderProjectionChart(idealData, actualData, projectedData) {
   _fullIdealData = idealData;
   _fullActualData = actualData;
   _fullProjectedData = projectedData;
-  _activeIdealData = idealData;
-  _activeActualData = actualData;
-  _activeProjectedData = projectedData;
   _drawProjectionChart(idealData, actualData, projectedData);
 }
 
@@ -231,99 +225,21 @@ function _drawProjectionChart(idealData, actualData, projectedData) {
 
 // ── Chart Timeline Filters ──
 function zoomChartWithSlider(percent) {
-  if (!_activeIdealData || _activeIdealData.length === 0) return;
+  if (!_fullIdealData || _fullIdealData.length === 0) return;
 
-  const totalPoints = _activeIdealData.length;
+  const totalPoints = _fullIdealData.length;
   // min zoom = 10% (or at least 7 points), max = 100%
   const pct = parseInt(percent);
   let pointsToShow = Math.max(7, Math.floor((pct / 100) * totalPoints));
 
-  const slicedIdeal = _activeIdealData.slice(-pointsToShow);
+  const slicedIdeal = _fullIdealData.slice(-pointsToShow);
   const cutoffLabel = slicedIdeal[0].label;
 
   const filter = (arr) => arr.filter((d) => d.label >= cutoffLabel);
   _drawProjectionChart(
-    filter(_activeIdealData),
-    filter(_activeActualData),
-    filter(_activeProjectedData),
-  );
-}
-
-function filterChart(range, btn) {
-  // Update active button
-  document
-    .querySelectorAll(".chart-filter-btn")
-    .forEach((b) => b.classList.remove("active"));
-  if (btn) btn.classList.add("active");
-
-  // Reset slider visual to max
-  const slider = document.getElementById("chartZoomSlider");
-  if (slider) slider.value = 100;
-
-  if (!_fullIdealData.length) return;
-
-  const now = new Date();
-  let cutoff;
-
-  if (range === "1M") {
-    cutoff = new Date(now);
-    cutoff.setMonth(cutoff.getMonth() - 1);
-  } else if (range === "3M") {
-    cutoff = new Date(now);
-    cutoff.setMonth(cutoff.getMonth() - 3);
-  } else if (range === "6M") {
-    cutoff = new Date(now);
-    cutoff.setMonth(cutoff.getMonth() - 6);
-  } else {
-    _activeIdealData = _fullIdealData;
-    _activeActualData = _fullActualData;
-    _activeProjectedData = _fullProjectedData;
-    _drawProjectionChart(_fullIdealData, _fullActualData, _fullProjectedData);
-    return;
-  }
-
-  const cutoffStr = cutoff.toISOString().split("T")[0];
-  const filter = (arr) => arr.filter((d) => d.label >= cutoffStr);
-  _activeIdealData = filter(_fullIdealData);
-  _activeActualData = filter(_fullActualData);
-  _activeProjectedData = filter(_fullProjectedData);
-  _drawProjectionChart(
-    _activeIdealData,
-    _activeActualData,
-    _activeProjectedData,
-  );
-}
-
-function filterChartByDates() {
-  // Reset slider visual to max
-  const slider = document.getElementById("chartZoomSlider");
-  if (slider) slider.value = 100;
-
-  const startEl = document.getElementById("chartStartDate");
-  const endEl = document.getElementById("chartEndDate");
-  if (!startEl || !endEl) return;
-  const start = startEl.value;
-  const end = endEl.value;
-  if (!start && !end) {
-    _activeIdealData = _fullIdealData;
-    _activeActualData = _fullActualData;
-    _activeProjectedData = _fullProjectedData;
-    _drawProjectionChart(_fullIdealData, _fullActualData, _fullProjectedData);
-    return;
-  }
-  const filter = (arr) =>
-    arr.filter((d) => {
-      if (start && d.label < start) return false;
-      if (end && d.label > end) return false;
-      return true;
-    });
-  _activeIdealData = filter(_fullIdealData);
-  _activeActualData = filter(_fullActualData);
-  _activeProjectedData = filter(_fullProjectedData);
-  _drawProjectionChart(
-    _activeIdealData,
-    _activeActualData,
-    _activeProjectedData,
+    filter(_fullIdealData),
+    filter(_fullActualData),
+    filter(_fullProjectedData),
   );
 }
 
