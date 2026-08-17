@@ -97,8 +97,8 @@
       this.y = y;
       this.text = text;
       this.color = color;
-      this.vx = (Math.random() - 0.5) * 15; // Explosive scatter horizontal
-      this.vy = (Math.random() - 1.0) * 10; // Explosive scatter upward
+      this.vx = (Math.random() - 0.5) * 8; // Explosive scatter horizontal
+      this.vy = (Math.random() - 1.0) * 6; // Explosive scatter upward
       this.life = 1.0;
       this.decay = Math.random() * 0.02 + 0.015;
       this.rotation = Math.random() * Math.PI * 2;
@@ -107,7 +107,7 @@
     }
 
     update() {
-      this.vy += 0.4; // Gravity
+      this.vy += 0.15; // Gravity
       this.x += this.vx;
       this.y += this.vy;
       this.rotation += this.rotSpeed;
@@ -139,8 +139,8 @@
       this.size = Math.floor(Math.random() * 16) + 14;
       this.x = Math.random() * (w - 200) + 50;
       this.y = -50 - Math.random() * 500; // Start off-screen
-      this.vx = (Math.random() - 0.5) * 1; // Slight horizontal drift
-      this.vy = Math.random() * 1 + 1; // Initial fall speed
+      this.vx = (Math.random() - 0.5) * 0.5; // Slight horizontal drift
+      this.vy = Math.random() * 0.5 + 0.5; // Initial fall speed
       this.type = Math.random() > 0.5 ? "jelly" : "glass";
 
       this.scaleX = 1;
@@ -155,7 +155,7 @@
       if (this.dead) return;
 
       if (!this.squishing) {
-        this.vy += 0.15; // Gravity
+        this.vy += 0.05; // Gravity
         this.x += this.vx;
         this.y += this.vy;
 
