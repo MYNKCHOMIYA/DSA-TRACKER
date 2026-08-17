@@ -256,7 +256,28 @@
         <p class="chart-sub">
           Ideal pace vs your actual progress — track if you will finish on time.
         </p>
-
+        <!-- Filter Controls -->
+        <div
+          class="chart-controls"
+          style="justify-content: flex-end; margin-bottom: 12px"
+        >
+          <div class="chart-date-range">
+            <input type="date" id="chartStartDate" title="Start date" />
+            <span class="chart-date-sep">→</span>
+            <input type="date" id="chartEndDate" title="End date" />
+            <button
+              class="chart-filter-btn active"
+              onclick="filterChartByDates()"
+              style="
+                border: 1px solid var(--glass-border);
+                border-radius: var(--radius-sm);
+                padding: 4px 10px;
+              "
+            >
+              Apply
+            </button>
+          </div>
+        </div>
         <div class="chart-container" style="height: 320px; margin-bottom: 16px">
           <canvas id="projectionChart"></canvas>
         </div>
