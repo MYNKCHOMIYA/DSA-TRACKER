@@ -141,37 +141,38 @@
       </div>
     </div>
 
-    <!-- Charts Row: Projection + Difficulty -->
-    <div class="charts-row">
-      <div class="chart-card animate-in">
-        <h3>Progress Projection</h3>
-        <p class="chart-sub">Ideal pace vs your actual progress — use filters to zoom in</p>
-        <!-- Filter Controls -->
-        <div class="chart-controls">
-          <div class="chart-filter-group">
-            <button class="chart-filter-btn" onclick="filterChart('1M',this)">1M</button>
-            <button class="chart-filter-btn" onclick="filterChart('3M',this)">3M</button>
-            <button class="chart-filter-btn" onclick="filterChart('6M',this)">6M</button>
-            <button class="chart-filter-btn active" onclick="filterChart('ALL',this)">All</button>
-          </div>
-          <div class="chart-date-range">
-            <input type="date" id="chartStartDate" title="Start date">
-            <span class="chart-date-sep">→</span>
-            <input type="date" id="chartEndDate" title="End date">
-            <button class="chart-filter-btn active" onclick="filterChartByDates()" style="border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:4px 10px">Apply</button>
-          </div>
+    <!-- Projection (Full Width for Readability) -->
+    <div class="chart-card animate-in" style="margin-bottom:24px;">
+      <h3>Progress Projection</h3>
+      <p class="chart-sub">Ideal pace vs your actual progress — track if you will finish on time.</p>
+      <!-- Filter Controls -->
+      <div class="chart-controls">
+        <div class="chart-filter-group">
+          <button class="chart-filter-btn" onclick="filterChart('1M',this)">1M</button>
+          <button class="chart-filter-btn" onclick="filterChart('3M',this)">3M</button>
+          <button class="chart-filter-btn" onclick="filterChart('6M',this)">6M</button>
+          <button class="chart-filter-btn active" onclick="filterChart('ALL',this)">All</button>
         </div>
-        <div class="chart-container" style="height:260px; margin-bottom:16px;">
-          <canvas id="projectionChart"></canvas>
-        </div>
-        <!-- Zoom Slider -->
-        <div class="chart-zoom-slider" style="display:flex; align-items:center; gap:12px; padding:0 8px;">
-          <span style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Zoom</span>
-          <input type="range" id="chartZoomSlider" min="10" max="100" value="100" oninput="zoomChartWithSlider(this.value)" style="flex:1;">
-          <span style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase;">All</span>
+        <div class="chart-date-range">
+          <input type="date" id="chartStartDate" title="Start date">
+          <span class="chart-date-sep">→</span>
+          <input type="date" id="chartEndDate" title="End date">
+          <button class="chart-filter-btn active" onclick="filterChartByDates()" style="border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:4px 10px">Apply</button>
         </div>
       </div>
+      <div class="chart-container" style="height:320px; margin-bottom:16px;">
+        <canvas id="projectionChart"></canvas>
+      </div>
+      <!-- Zoom Slider -->
+      <div class="chart-zoom-slider" style="display:flex; align-items:center; gap:12px; padding:0 8px;">
+        <span style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Zoom In</span>
+        <input type="range" id="chartZoomSlider" min="10" max="100" value="100" oninput="zoomChartWithSlider(this.value)" style="flex:1;">
+        <span style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Full Timeline</span>
+      </div>
+    </div>
 
+    <!-- Charts Row: Donut + Heatmap -->
+    <div class="two-col">
       <div class="chart-card animate-in">
         <h3>LeetCode Breakdown</h3>
         <p class="chart-sub">Problems by difficulty</p>
@@ -189,9 +190,17 @@
         <!-- Hidden canvas for Chart.js compat -->
         <canvas id="difficultyChart" style="display:none"></canvas>
       </div>
+
+      <div class="chart-card animate-in">
+        <h3>Submission Heatmap</h3>
+        <p class="chart-sub">LeetCode activity over the last months</p>
+        <div class="heatmap-container" id="heatmapContainer">
+          <div class="heatmap-grid" id="heatmapGrid"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- Categories + Heatmap -->
+    <!-- Categories + Efficiency -->
     <div class="two-col">
       <!-- Striver Categories -->
       <div class="categories-section animate-in">
@@ -202,16 +211,7 @@
         </div>
       </div>
 
-      <!-- Heatmap + Activity -->
       <div style="display:flex; flex-direction:column; gap:16px">
-        <div class="chart-card animate-in">
-          <h3>Submission Heatmap</h3>
-          <p class="chart-sub">LeetCode activity over the last months</p>
-          <div class="heatmap-container" id="heatmapContainer">
-            <div class="heatmap-grid" id="heatmapGrid"></div>
-          </div>
-        </div>
-
         <!-- Efficiency -->
         <div class="chart-card animate-in">
           <h3>Efficiency</h3>

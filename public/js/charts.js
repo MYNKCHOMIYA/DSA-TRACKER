@@ -62,7 +62,7 @@ function _drawProjectionChart(idealData, actualData, projectedData) {
           borderColor: 'rgba(255, 62, 165, 0.35)',
           borderDash: [6, 4],
           borderWidth: 1.5,
-          fill: false,
+          fill: { target: 'origin', above: 'rgba(255, 62, 165, 0.05)' },
           pointRadius: 0,
           tension: 0.2,
           spanGaps: true,
@@ -101,41 +101,86 @@ function _drawProjectionChart(idealData, actualData, projectedData) {
       plugins: {
         legend: {
           position: 'top',
-          labels: {
-            usePointStyle: true,
-            pointStyle: 'circle',
-            padding: 18,
-            font: { size: 11, weight: '600' },
-            color: '#a39bb8',
-          },
+          labels: { usePointStyle: true, pointStyle: 'circle', padding: 18, font: { size: 11, weight: '600' }, color: '#a39bb8' },
         },
         tooltip: {
           backgroundColor: 'rgba(10, 5, 24, 0.96)',
-          borderColor: 'rgba(255,62,165,0.2)',
+          borderColor: 'rgba(255,255,255,0.1)',
           borderWidth: 1,
           padding: 14,
           titleFont: { size: 12, weight: '700' },
-          bodyFont: { size: 11 },
+          bodyFont: { size: 12, weight: '500' },
+          bodySpacing: 6,
           cornerRadius: 10,
           callbacks: {
-            title: (items) => items[0].label,
+            title: (items) => `📅 Date: ${items[0].label}`,
+            label: (context) => {
+              const ds = context.dataset.label;
+              const val = context.parsed.y;
+              if (ds === 'Ideal Pace') return `🎯 Target: You should have solved ${val} problems`;
+              if (ds === 'Actual Progress') return `🚀 Actual: You solved ${val} problems`;
+              if (ds === 'Projected') return `📈 Projected: If you keep this pace, you'll reach ${val}`;
+              return `${ds}: ${val}`;
+            }
           }
         },
+        annotation: {
+          // Custom inline plugin for "Today" vertical line
+          id: 'todayLine',
+          afterDraw: (chart) => {
+            const todayISO = new Date().toISOString().split('T')[0];
+            const ctx = chart.ctx;
+            const xAxis = chart.scales.x;
+            const yAxis = chart.scales.y;
+            
+            // Find the index of today's label if it exists in the data
+            const todayIndex = chart.data.labels.findIndex((label, i) => {
+              // We compare against the original ISO labels which we mapped to display
+              // Wait, the x-axis uses displayLabels. Let's find today's display label.
+              const todayDisplay = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+              return label === todayDisplay;
+            });
+
+            if (todayIndex !== -1) {
+              const x = xAxis.getPixelForValue(todayIndex);
+              ctx.save();
+              ctx.beginPath();
+              ctx.moveTo(x, yAxis.top);
+              ctx.lineTo(x, yAxis.bottom);
+              ctx.lineWidth = 1.5;
+              ctx.strokeStyle = 'rgba(255, 62, 165, 0.5)';
+              ctx.setLineDash([4, 4]);
+              ctx.stroke();
+              
+              // Draw "TODAY" badge
+              ctx.fillStyle = 'rgba(255, 62, 165, 0.9)';
+              ctx.fillRoundRect = function(x,y,w,h,r) {
+                this.beginPath(); this.moveTo(x+r,y); this.lineTo(x+w-r,y); this.quadraticCurveTo(x+w,y,x+w,y+r); this.lineTo(x+w,y+h-r); this.quadraticCurveTo(x+w,y+h,x+w-r,y+h); this.lineTo(x+r,y+h); this.quadraticCurveTo(x,y+h,x,y+h-r); this.lineTo(x,y+r); this.quadraticCurveTo(x,y,x+r,y); this.closePath(); this.fill();
+              };
+              const text = 'TODAY';
+              ctx.font = 'bold 9px sans-serif';
+              const textWidth = ctx.measureText(text).width;
+              ctx.fillRoundRect(x - textWidth/2 - 6, yAxis.top + 4, textWidth + 12, 16, 4);
+              ctx.fillStyle = '#fff';
+              ctx.fillText(text, x - textWidth/2, yAxis.top + 15);
+              ctx.restore();
+            }
+          }
+        }
       },
       scales: {
-        x: {
-          grid: { display: false },
-          border: { display: false },
-          ticks: { maxTicksLimit: 8, font: { size: 10 }, color: '#6b6280' },
-        },
-        y: {
-          beginAtZero: true,
-          grid: { color: 'rgba(255,255,255,0.03)' },
-          border: { display: false, dash: [4, 4] },
-          ticks: { font: { size: 10 }, color: '#6b6280' },
-        },
+        x: { grid: { display: false }, border: { display: false }, ticks: { maxTicksLimit: 8, font: { size: 10 }, color: '#6b6280' } },
+        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' }, border: { display: false, dash: [4, 4] }, ticks: { font: { size: 10 }, color: '#6b6280' } },
       },
     },
+    plugins: [{
+      id: 'todayLine',
+      afterDraw: (chart) => {
+        if(chart.config.options.plugins.annotation.afterDraw) {
+          chart.config.options.plugins.annotation.afterDraw(chart);
+        }
+      }
+    }]
   });
 }
 
