@@ -139,13 +139,24 @@ function renderDashboard() {
   renderProjection();
   renderLeetCodeCharts();
   renderCategoriesSection();
+
+  // Platform Breakdown Chart
+  const totalSolved =
+    (userSettings.manualSolvedCount || 0) + (logStats.totalQuestions || 0);
+  const lcSolved = leetcodeData.solved?.solvedProblem || 0;
+  // Let striverSolved be totalSolved, or if they track strictly separate we just use totalSolved as Striver
+  if (typeof renderBreakdownChart === "function") {
+    renderBreakdownChart(lcSolved, totalSolved);
+  }
+
   renderActivityFeed();
   renderEfficiency();
 }
 
 // ── Stats Cards ──
 function renderStatsCards() {
-  const totalSolved = userSettings.manualSolvedCount || 0;
+  const totalSolved =
+    (userSettings.manualSolvedCount || 0) + (logStats.totalQuestions || 0);
   const lcSolved = leetcodeData.solved?.solvedProblem || 0;
   const sheetTotal = userSettings.totalSheetProblems || 474;
   const dailyTarget = userSettings.dailyTarget || 5;
@@ -693,6 +704,9 @@ async function saveDetailedLog() {
     updateCircularProgress(questions, userSettings.dailyTarget || 5);
     closeLogModal();
     showToast("Daily log saved! 📝", "success");
+
+    // Refresh all UI components with the new stats
+    refreshAllData();
   } catch (err) {
     showToast("Failed to save log.", "error");
   }

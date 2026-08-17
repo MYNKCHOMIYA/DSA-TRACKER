@@ -525,3 +525,110 @@ function updateCircularProgress(done, target) {
     }
   }
 }
+
+// ── Platform Breakdown Chart ──
+let platformBreakdownChartInstance = null;
+
+function renderBreakdownChart(lcSolved, striverSolved) {
+  const ctx = document.getElementById("platformBreakdownChart");
+  if (!ctx) return;
+  if (platformBreakdownChartInstance) platformBreakdownChartInstance.destroy();
+
+  const total = lcSolved + striverSolved;
+  const lcPct = total > 0 ? ((lcSolved / total) * 100).toFixed(1) : 0;
+  const striverPct = total > 0 ? ((striverSolved / total) * 100).toFixed(1) : 0;
+
+  platformBreakdownChartInstance = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: ["LeetCode", "Striver Sheet"],
+      datasets: [
+        {
+          data: [lcSolved, striverSolved],
+          backgroundColor: ["#ffb84d", "#ff3ea5"],
+          hoverBackgroundColor: ["#ffc773", "#ff6bb8"],
+          borderWidth: 0,
+          hoverOffset: 6,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: "75%",
+      plugins: {
+        legend: {
+          display: false, // We use the custom HTML table for legend
+        },
+        tooltip: {
+          backgroundColor: "rgba(10, 5, 24, 0.96)",
+          borderColor: "rgba(255,255,255,0.1)",
+          borderWidth: 1,
+          padding: 12,
+          bodyFont: { size: 13, weight: "600", family: "'Inter', sans-serif" },
+          callbacks: {
+            label: (context) => {
+              const val = context.parsed;
+              const pct = total > 0 ? Math.round((val / total) * 100) : 0;
+              return ` ${context.label}: ${val} (${pct}%)`;
+            },
+          },
+        },
+      },
+    },
+    plugins: [
+      {
+        id: "centerText",
+        beforeDraw: function (chart) {
+          var width = chart.width,
+            height = chart.height,
+            ctx = chart.ctx;
+
+          ctx.restore();
+          var fontSize = (height / 120).toFixed(2);
+          ctx.font = "bold " + fontSize + "em 'Space Grotesk', sans-serif";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#ffffff";
+
+          var text = total.toString(),
+            textX = Math.round((width - ctx.measureText(text).width) / 2),
+            textY = height / 2 - 10;
+
+          ctx.fillText(text, textX, textY);
+
+          ctx.font =
+            "600 " + (fontSize * 0.4).toFixed(2) + "em 'Inter', sans-serif";
+          ctx.fillStyle = "#a39bb8";
+          var label = "Total";
+          var labelX = Math.round((width - ctx.measureText(label).width) / 2);
+          ctx.fillText(label, labelX, textY + 24);
+
+          ctx.save();
+        },
+      },
+    ],
+  });
+
+  // Populate Table
+  const tbody = document.getElementById("platformBreakdownTableBody");
+  if (tbody) {
+    tbody.innerHTML = `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 12px 8px; font-weight: 600; color: white;">
+          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ffb84d; margin-right:8px;"></span>
+          LeetCode
+        </td>
+        <td style="padding: 12px 8px; text-align: right; color: white;">${lcSolved}</td>
+        <td style="padding: 12px 8px; text-align: right; color: #a39bb8;">${lcPct}%</td>
+      </tr>
+      <tr>
+        <td style="padding: 12px 8px; font-weight: 600; color: white;">
+          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ff3ea5; margin-right:8px;"></span>
+          Striver Sheet
+        </td>
+        <td style="padding: 12px 8px; text-align: right; color: white;">${striverSolved}</td>
+        <td style="padding: 12px 8px; text-align: right; color: #a39bb8;">${striverPct}%</td>
+      </tr>
+    `;
+  }
+}
