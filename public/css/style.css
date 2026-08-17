@@ -83,12 +83,14 @@ a:hover{color:var(--accent-pink)}
 .form-group label{display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px}
 .input-wrap{position:relative;display:flex;align-items:center}
 .input-icon{position:absolute;left:14px;color:var(--text-muted);font-size:14px;pointer-events:none;transition:color var(--transition-fast);z-index:1;line-height:1}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:13px 16px 13px 42px;background:rgba(255,255,255,0.035);border:1px solid var(--glass-border);border-radius:var(--radius-md);color:var(--text-primary);font-family:inherit;font-size:14px;font-weight:400;transition:all var(--transition-fast);outline:none;min-height:48px;-webkit-appearance:none;appearance:none}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:13px 16px 13px 42px;background:rgba(255,255,255,0.035);border:1px solid var(--glass-border);border-radius:var(--radius-md);color:var(--text-primary);font-family:inherit;font-size:14px;font-weight:400;transition:all var(--transition-fast);outline:none;min-height:48px;-webkit-appearance:none;appearance:none;color-scheme:dark}
 .form-group select,.form-group textarea{padding-left:16px}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{background:rgba(255,255,255,0.06);border-color:var(--accent-pink);box-shadow:0 0 0 3px rgba(255,62,165,0.12),0 0 20px rgba(255,62,165,0.06)}
 .input-wrap:focus-within .input-icon{color:var(--accent-pink)}
 .form-group input::placeholder{color:var(--text-muted);font-weight:400}
 .form-group textarea{resize:vertical;min-height:80px;padding:12px 16px}
+/* ── Browser Autofill Dark Override ── */
+input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus,input:-webkit-autofill:active{-webkit-box-shadow:0 0 0 1000px rgba(8,4,20,0.95) inset!important;box-shadow:0 0 0 1000px rgba(8,4,20,0.95) inset!important;-webkit-text-fill-color:#f7f3ff!important;caret-color:#f7f3ff;border-color:var(--glass-border)!important;transition:background-color 99999s ease 0s,color 99999s ease 0s}
 .form-error{color:var(--accent-red);font-size:12px;font-weight:500;margin-top:8px;display:none;padding:8px 12px;background:rgba(255,62,165,0.07);border-radius:var(--radius-sm);border-left:3px solid var(--accent-red)}
 .form-error.show{display:block}
 
@@ -193,18 +195,20 @@ a:hover{color:var(--accent-pink)}
 .stat-card .card-sub{font-size:12px;color:var(--text-secondary);font-weight:500}
 
 /* Today's Card */
-.today-progress-ring{position:absolute;top:16px;right:16px;width:60px;height:60px}
-.today-progress-ring svg{width:60px;height:60px;transform:rotate(-90deg);overflow:visible}
-.today-ring-track{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:4}
-.today-ring-fill{fill:none;stroke:url(#ringGrad);stroke-width:4;stroke-linecap:round;transition:stroke-dasharray 0.8s cubic-bezier(0.4,0,0.2,1)}
-.today-ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text-primary)}
-.today-counter-row{display:flex;align-items:center;gap:6px;margin-top:4px;margin-bottom:8px}
-.today-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--glass-border);background:rgba(255,255,255,0.04);color:var(--text-secondary);font-size:16px;font-weight:700;cursor:pointer;transition:all var(--transition-fast);display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0}
+/* Today's Card — Ring + Counter layout (no overlap) */
+#cardToday{padding-right:88px;min-height:120px}
+.today-progress-ring{position:absolute;top:14px;right:14px;width:68px;height:68px;flex-shrink:0}
+.today-progress-ring svg{width:68px;height:68px;transform:rotate(-90deg);overflow:visible}
+.today-ring-track{fill:none;stroke:rgba(255,255,255,0.07);stroke-width:5}
+.today-ring-fill{fill:none;stroke:url(#ringGrad);stroke-width:5;stroke-linecap:round;transition:stroke-dasharray 0.8s cubic-bezier(0.4,0,0.2,1);filter:drop-shadow(0 0 6px rgba(255,62,165,0.4))}
+.today-ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--text-primary);letter-spacing:-0.5px}
+.today-counter-row{display:flex;align-items:center;gap:7px;margin-top:6px;margin-bottom:6px}
+.today-btn{width:26px;height:26px;border-radius:50%;border:1px solid var(--glass-border);background:rgba(255,255,255,0.04);color:var(--text-secondary);font-size:15px;font-weight:700;cursor:pointer;transition:all var(--transition-fast);display:flex;align-items:center;justify-content:center;line-height:1;flex-shrink:0;padding:0}
 .today-btn:hover{border-color:var(--accent-pink);color:var(--accent-pink);background:rgba(255,62,165,0.08);box-shadow:0 0 10px rgba(255,62,165,0.2)}
-.today-btn:active{transform:scale(0.9)}
-.today-num{font-size:26px;font-weight:800;letter-spacing:-0.04em;color:var(--text-primary);min-width:32px;text-align:center;transition:all 0.2s ease}
-.today-target-label{color:var(--text-muted);font-size:13px;font-weight:500}
-.today-motivation{font-size:11px;font-weight:600;letter-spacing:0.02em;padding:3px 8px;border-radius:var(--radius-full);display:inline-block;margin-top:4px}
+.today-btn:active{transform:scale(0.88)}
+.today-num{font-size:24px;font-weight:800;letter-spacing:-0.04em;color:var(--text-primary);min-width:28px;text-align:center;transition:all 0.2s ease}
+.today-target-label{color:var(--text-muted);font-size:12px;font-weight:500}
+.today-motivation{font-size:10px;font-weight:700;letter-spacing:0.03em;padding:3px 8px;border-radius:var(--radius-full);display:inline-block;margin-top:2px}
 .today-motivation.great{color:var(--accent-green);background:rgba(52,211,153,0.1)}
 .today-motivation.half{color:var(--accent-gold);background:rgba(255,211,79,0.1)}
 .today-motivation.done{color:var(--accent-pink);background:rgba(255,62,165,0.1)}
@@ -227,9 +231,13 @@ a:hover{color:var(--accent-pink)}
 .chart-filter-btn:hover{color:var(--text-secondary)}
 .chart-filter-btn.active{background:var(--gradient-primary);color:white;box-shadow:0 0 10px var(--glow-pink)}
 .chart-date-range{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.chart-date-range input[type="date"]{padding:5px 10px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:11px;font-family:inherit;font-weight:500;outline:none;cursor:pointer;transition:border-color var(--transition-fast);min-height:30px}
-.chart-date-range input[type="date"]:focus{border-color:var(--accent-pink);color:var(--text-primary)}
+.chart-date-range input[type="date"]{padding:5px 10px;background:rgba(8,4,20,0.9);border:1px solid var(--glass-border);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:11px;font-family:inherit;font-weight:500;outline:none;cursor:pointer;transition:all var(--transition-fast);min-height:30px;color-scheme:dark}
+.chart-date-range input[type="date"]:focus{border-color:var(--accent-pink);color:var(--text-primary);box-shadow:0 0 0 2px rgba(255,62,165,0.1)}
+.chart-date-range input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.7) sepia(1) saturate(3) hue-rotate(280deg);cursor:pointer;opacity:0.6}
+.chart-date-range input[type="date"]::-webkit-calendar-picker-indicator:hover{opacity:1}
 .chart-date-sep{color:var(--text-muted);font-size:11px;font-weight:600}
+/* Global dark color-scheme for all date/time inputs */
+input[type="date"],input[type="time"],input[type="datetime-local"]{color-scheme:dark}
 
 /* Custom Donut */
 .donut-wrap{display:flex;flex-direction:column;align-items:center;gap:20px;padding:8px 0}
