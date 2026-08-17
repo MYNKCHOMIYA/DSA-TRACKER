@@ -26,10 +26,10 @@
   window.addEventListener("resize", resize, { passive: true });
 
   const PALETTE = [
-    "255, 62, 165",   // pink
-    "55, 183, 255",   // blue
-    "255, 211, 79",   // gold
-    "200, 200, 255",  // white-ish
+    "255, 62, 165", // pink
+    "55, 183, 255", // blue
+    "255, 211, 79", // gold
+    "200, 200, 255", // white-ish
   ];
 
   class Particle {
@@ -78,7 +78,6 @@
   animate();
 })();
 
-
 /* ═══════════════════════════════════════════════════════════════
    2. CURSOR SCROLL COLOR SHIFT & SPOTLIGHT
    Shifts the cursor spotlight hue and moves it with pointer.
@@ -108,7 +107,7 @@
         ticking = true;
       }
     },
-    { passive: true }
+    { passive: true },
   );
 
   window.addEventListener("pointerleave", () => {

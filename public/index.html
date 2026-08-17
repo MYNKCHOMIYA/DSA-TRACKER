@@ -1,106 +1,179 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>DSA Tracker — Login</title>
-  <meta name="description" content="Track your daily DSA progress across Striver A2Z Sheet, LeetCode, and GitHub.">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>DSA Tracker — Login</title>
+    <meta
+      name="description"
+      content="Track your daily DSA progress across Striver A2Z Sheet, LeetCode, and GitHub."
+    />
 
-  <!-- PWA / Mobile -->
-  <meta name="theme-color" content="#080c18">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="DSA Tracker">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="manifest" href="/manifest.json">
+    <!-- PWA / Mobile -->
+    <meta name="theme-color" content="#080c18" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="DSA Tracker" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="/manifest.json" />
 
-  <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23080c18'/><text y='.9em' font-size='90'>🎯</text></svg>">
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23080c18'/><text y='.9em' font-size='90'>🎯</text></svg>"
+    />
 
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-  <canvas id="particles-canvas" aria-hidden="true"></canvas>
-  <div id="cursor-spotlight"></div>
-  <div class="auth-page">
-    <div class="auth-container">
-      <div class="auth-card">
-        <!-- Logo -->
-        <div class="auth-logo">
-          <div class="auth-brand">
-            <div class="auth-brand-mark">DSA</div>
-            <h1><span class="word-dsa">DSA</span><span class="word-tracker">.Track</span></h1>
-          </div>
-          <p class="auth-tagline">Master DSA · One problem at a time</p>
-        </div>
-
-        <!-- Tabs -->
-        <div class="auth-tabs">
-          <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign In</button>
-          <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Create Account</button>
-        </div>
-
-        <!-- Login Form -->
-        <form id="loginForm" onsubmit="handleLogin(event)">
-          <div class="form-group">
-            <label for="loginEmail">Email Address</label>
-            <div class="input-wrap">
-              <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email" inputmode="email">
-              <span class="input-icon">✉</span>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <canvas id="particles-canvas" aria-hidden="true"></canvas>
+    <div id="cursor-spotlight"></div>
+    <div class="auth-page">
+      <div class="auth-container">
+        <div class="auth-card">
+          <!-- Logo -->
+          <div class="auth-logo">
+            <div class="auth-brand">
+              <div class="auth-brand-mark">DSA</div>
+              <h1>
+                <span class="word-dsa">DSA</span
+                ><span class="word-tracker">.Track</span>
+              </h1>
             </div>
+            <p class="auth-tagline">Master DSA · One problem at a time</p>
           </div>
-          <div class="form-group">
-            <label for="loginPassword">Password</label>
-            <div class="input-wrap">
-              <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
-              <span class="input-icon">🔒</span>
-            </div>
-          </div>
-          <div class="form-error" id="loginError"></div>
-          <button type="submit" class="btn btn-primary" id="loginBtn">
-            Sign In
-          </button>
-        </form>
 
-        <!-- Signup Form -->
-        <form id="signupForm" style="display:none;" onsubmit="handleSignup(event)">
-          <div class="form-group">
-            <label for="signupName">Full Name</label>
-            <input type="text" id="signupName" placeholder="Your name" required autocomplete="name">
+          <!-- Tabs -->
+          <div class="auth-tabs">
+            <button
+              class="auth-tab active"
+              id="loginTab"
+              onclick="switchTab('login')"
+            >
+              Sign In
+            </button>
+            <button
+              class="auth-tab"
+              id="signupTab"
+              onclick="switchTab('signup')"
+            >
+              Create Account
+            </button>
           </div>
-          <div class="form-group">
-            <label for="signupEmail">Email</label>
-            <input type="email" id="signupEmail" placeholder="you@example.com" required autocomplete="email" inputmode="email">
-          </div>
-          <div class="form-group">
-            <label for="signupPassword">Password</label>
-            <input type="password" id="signupPassword" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password">
-          </div>
-          <div class="form-group">
-            <label for="signupConfirm">Confirm Password</label>
-            <input type="password" id="signupConfirm" placeholder="••••••••" required autocomplete="new-password">
-          </div>
-          <div class="form-error" id="signupError"></div>
-          <button type="submit" class="btn btn-primary" id="signupBtn">
-            Create Account
-          </button>
-        </form>
+
+          <!-- Login Form -->
+          <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label for="loginEmail">Email Address</label>
+              <div class="input-wrap">
+                <input
+                  type="email"
+                  id="loginEmail"
+                  placeholder="you@example.com"
+                  required
+                  autocomplete="email"
+                  inputmode="email"
+                />
+                <span class="input-icon">✉</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <div class="input-wrap">
+                <input
+                  type="password"
+                  id="loginPassword"
+                  placeholder="Enter your password"
+                  required
+                  autocomplete="current-password"
+                />
+                <span class="input-icon">🔒</span>
+              </div>
+            </div>
+            <div class="form-error" id="loginError"></div>
+            <button type="submit" class="btn btn-primary" id="loginBtn">
+              Sign In
+            </button>
+          </form>
+
+          <!-- Signup Form -->
+          <form
+            id="signupForm"
+            style="display: none"
+            onsubmit="handleSignup(event)"
+          >
+            <div class="form-group">
+              <label for="signupName">Full Name</label>
+              <input
+                type="text"
+                id="signupName"
+                placeholder="Your name"
+                required
+                autocomplete="name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="signupEmail">Email</label>
+              <input
+                type="email"
+                id="signupEmail"
+                placeholder="you@example.com"
+                required
+                autocomplete="email"
+                inputmode="email"
+              />
+            </div>
+            <div class="form-group">
+              <label for="signupPassword">Password</label>
+              <input
+                type="password"
+                id="signupPassword"
+                placeholder="Min 6 characters"
+                required
+                minlength="6"
+                autocomplete="new-password"
+              />
+            </div>
+            <div class="form-group">
+              <label for="signupConfirm">Confirm Password</label>
+              <input
+                type="password"
+                id="signupConfirm"
+                placeholder="••••••••"
+                required
+                autocomplete="new-password"
+              />
+            </div>
+            <div class="form-error" id="signupError"></div>
+            <button type="submit" class="btn btn-primary" id="signupBtn">
+              Create Account
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="toast-container" id="toastContainer"></div>
+    <div class="toast-container" id="toastContainer"></div>
 
-  <script src="/js/auth.js"></script>
-  <script src="/js/effects.js"></script>
-  <script>
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
-      });
-    }
-  </script>
-</body>
+    <script src="/js/auth.js"></script>
+    <script src="/js/effects.js"></script>
+    <script>
+      // Register Service Worker
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        });
+      }
+    </script>
+  </body>
 </html>
