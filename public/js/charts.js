@@ -529,106 +529,120 @@ function updateCircularProgress(done, target) {
 // ── Platform Breakdown Chart ──
 let platformBreakdownChartInstance = null;
 
-function renderBreakdownChart(lcSolved, striverSolved) {
+function renderBreakdownChart(lcCalendarData, allLogs) {
+  // 1. Process LeetCode Calendar
+  let lcData = {};
+  if (lcCalendarData && lcCalendarData.submissionCalendar) {
+    const subCal =
+      typeof lcCalendarData.submissionCalendar === "string"
+        ? JSON.parse(lcCalendarData.submissionCalendar)
+        : lcCalendarData.submissionCalendar;
+    for (const [timestamp, count] of Object.entries(subCal)) {
+      const dateStr = new Date(parseInt(timestamp) * 1000)
+        .toISOString()
+        .split("T")[0];
+      lcData[dateStr] = (lcData[dateStr] || 0) + count;
+    }
+  }
+
+  // 2. Process Striver Logs
+  let striverData = {};
+  if (allLogs) {
+    for (const log of allLogs) {
+      striverData[log.date] = log.questionsDone;
+    }
+  }
+
+  // 3. Generate last 7 days range
+  const dates = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    dates.push(d.toISOString().split("T")[0]);
+  }
+
+  // 4. Map data arrays
+  const lcArray = dates.map((d) => lcData[d] || 0);
+  const striverArray = dates.map((d) => striverData[d] || 0);
+  const displayDates = dates.map((d) => {
+    const dt = new Date(d);
+    return dt.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  });
+
+  // 5. Render Chart
   const ctx = document.getElementById("platformBreakdownChart");
   if (!ctx) return;
   if (platformBreakdownChartInstance) platformBreakdownChartInstance.destroy();
 
-  const total = lcSolved + striverSolved;
-  const lcPct = total > 0 ? ((lcSolved / total) * 100).toFixed(1) : 0;
-  const striverPct = total > 0 ? ((striverSolved / total) * 100).toFixed(1) : 0;
-
   platformBreakdownChartInstance = new Chart(ctx, {
-    type: "doughnut",
+    type: "bar",
     data: {
-      labels: ["LeetCode", "Striver Sheet"],
+      labels: displayDates,
       datasets: [
         {
-          data: [lcSolved, striverSolved],
-          backgroundColor: ["#ffb84d", "#ff3ea5"],
-          hoverBackgroundColor: ["#ffc773", "#ff6bb8"],
-          borderWidth: 0,
-          hoverOffset: 6,
+          label: "LeetCode",
+          data: lcArray,
+          backgroundColor: "#ffb84d",
+          borderRadius: 4,
+        },
+        {
+          label: "Striver Sheet",
+          data: striverArray,
+          backgroundColor: "#ff3ea5",
+          borderRadius: 4,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      cutout: "75%",
-      plugins: {
-        legend: {
-          display: false, // We use the custom HTML table for legend
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false, drawBorder: false },
+          ticks: { color: "#a39bb8" },
         },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          grid: { color: "rgba(255,255,255,0.05)", drawBorder: false },
+          ticks: { color: "#a39bb8", stepSize: 1 },
+        },
+      },
+      plugins: {
+        legend: { display: false },
         tooltip: {
           backgroundColor: "rgba(10, 5, 24, 0.96)",
           borderColor: "rgba(255,255,255,0.1)",
           borderWidth: 1,
           padding: 12,
           bodyFont: { size: 13, weight: "600", family: "'Inter', sans-serif" },
-          callbacks: {
-            label: (context) => {
-              const val = context.parsed;
-              const pct = total > 0 ? Math.round((val / total) * 100) : 0;
-              return ` ${context.label}: ${val} (${pct}%)`;
-            },
-          },
+          mode: "index",
+          intersect: false,
         },
       },
     },
-    plugins: [
-      {
-        id: "centerText",
-        beforeDraw: function (chart) {
-          var width = chart.width,
-            height = chart.height,
-            ctx = chart.ctx;
-
-          ctx.restore();
-          var fontSize = (height / 120).toFixed(2);
-          ctx.font = "bold " + fontSize + "em 'Space Grotesk', sans-serif";
-          ctx.textBaseline = "middle";
-          ctx.fillStyle = "#ffffff";
-
-          var text = total.toString(),
-            textX = Math.round((width - ctx.measureText(text).width) / 2),
-            textY = height / 2 - 10;
-
-          ctx.fillText(text, textX, textY);
-
-          ctx.font =
-            "600 " + (fontSize * 0.4).toFixed(2) + "em 'Inter', sans-serif";
-          ctx.fillStyle = "#a39bb8";
-          var label = "Total";
-          var labelX = Math.round((width - ctx.measureText(label).width) / 2);
-          ctx.fillText(label, labelX, textY + 24);
-
-          ctx.save();
-        },
-      },
-    ],
   });
 
-  // Populate Table
+  // 6. Populate Table (sort descending)
   const tbody = document.getElementById("platformBreakdownTableBody");
   if (tbody) {
-    tbody.innerHTML = `
-      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <td style="padding: 12px 8px; font-weight: 600; color: white;">
-          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ffb84d; margin-right:8px;"></span>
-          LeetCode
-        </td>
-        <td style="padding: 12px 8px; text-align: right; color: white;">${lcSolved}</td>
-        <td style="padding: 12px 8px; text-align: right; color: #a39bb8;">${lcPct}%</td>
-      </tr>
-      <tr>
-        <td style="padding: 12px 8px; font-weight: 600; color: white;">
-          <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ff3ea5; margin-right:8px;"></span>
-          Striver Sheet
-        </td>
-        <td style="padding: 12px 8px; text-align: right; color: white;">${striverSolved}</td>
-        <td style="padding: 12px 8px; text-align: right; color: #a39bb8;">${striverPct}%</td>
-      </tr>
-    `;
+    let rowsHtml = "";
+    for (let i = dates.length - 1; i >= 0; i--) {
+      const d = displayDates[i];
+      const lc = lcArray[i];
+      const st = striverArray[i];
+      const total = lc + st;
+      rowsHtml += `
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <td style="padding: 12px 8px; color: #a39bb8;">${d}</td>
+          <td style="padding: 12px 8px; text-align: right; color: #ffb84d;">${lc}</td>
+          <td style="padding: 12px 8px; text-align: right; color: #ff3ea5;">${st}</td>
+          <td style="padding: 12px 8px; text-align: right; color: white; font-weight: 600;">${total}</td>
+        </tr>
+      `;
+    }
+    tbody.innerHTML = rowsHtml;
   }
 }

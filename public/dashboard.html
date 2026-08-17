@@ -318,26 +318,43 @@
 
       <!-- Platform Breakdown -->
       <div class="chart-card animate-in" style="margin-bottom: 24px">
-        <h3>Platform Breakdown</h3>
-        <p class="chart-sub">Questions solved on LeetCode vs Striver Sheet</p>
-        <div class="two-col" style="margin-top: 24px; align-items: center">
+        <h3>Daily Platform Breakdown</h3>
+        <p class="chart-sub">
+          Per day question count for LeetCode and Striver Sheet
+        </p>
+        <div class="two-col" style="margin-top: 24px; align-items: stretch">
           <div
             class="chart-container"
-            style="height: 220px; display: flex; justify-content: center"
+            style="
+              height: 280px;
+              display: flex;
+              justify-content: center;
+              flex: 1;
+            "
           >
             <canvas id="platformBreakdownChart"></canvas>
           </div>
-          <div class="breakdown-table-container">
+          <div
+            class="breakdown-table-container"
+            style="flex: 1; max-height: 280px; overflow-y: auto"
+          >
             <table
               class="glass-table"
               style="
                 width: 100%;
                 border-collapse: collapse;
                 text-align: left;
-                font-size: 14px;
+                font-size: 13px;
               "
             >
-              <thead>
+              <thead
+                style="
+                  position: sticky;
+                  top: 0;
+                  background: rgba(5, 3, 10, 0.95);
+                  z-index: 1;
+                "
+              >
                 <tr
                   style="
                     border-bottom: 1px solid var(--glass-border);
@@ -347,10 +364,17 @@
                     letter-spacing: 0.5px;
                   "
                 >
-                  <th style="padding: 12px 8px">Platform</th>
-                  <th style="padding: 12px 8px; text-align: right">Solved</th>
-                  <th style="padding: 12px 8px; text-align: right">
-                    % of Total
+                  <th style="padding: 12px 8px">Date</th>
+                  <th style="padding: 12px 8px; text-align: right">LeetCode</th>
+                  <th style="padding: 12px 8px; text-align: right">Striver</th>
+                  <th
+                    style="
+                      padding: 12px 8px;
+                      text-align: right;
+                      color: var(--text-primary);
+                    "
+                  >
+                    Total
                   </th>
                 </tr>
               </thead>

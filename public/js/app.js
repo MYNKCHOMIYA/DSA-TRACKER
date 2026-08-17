@@ -7,6 +7,7 @@ let userSettings = {};
 let leetcodeData = { profile: null, solved: null, calendar: null };
 let githubData = { repo: null, commits: null };
 let logStats = {};
+let allLogs = [];
 let todayLog = { questionsDone: 0 };
 
 // ── Initialize ──
@@ -38,6 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       loadGitHubData(),
       loadLogStats(),
       loadTodayLog(),
+      loadAllLogs(),
     ]);
 
     // Render everything
@@ -106,6 +108,16 @@ async function loadTodayLog() {
   }
 }
 
+async function loadAllLogs() {
+  try {
+    const res = await fetch("/api/logs", { headers: getAuthHeaders() });
+    const data = await res.json();
+    allLogs = data.logs || [];
+  } catch (err) {
+    console.error("All logs error:", err);
+  }
+}
+
 // ── Refresh All ──
 async function refreshAllData() {
   const btn = document.getElementById("refreshBtn");
@@ -121,6 +133,7 @@ async function refreshAllData() {
       loadGitHubData(),
       loadLogStats(),
       loadTodayLog(),
+      loadAllLogs(),
     ]);
 
     renderDashboard();
@@ -141,12 +154,8 @@ function renderDashboard() {
   renderCategoriesSection();
 
   // Platform Breakdown Chart
-  const totalSolved =
-    (userSettings.manualSolvedCount || 0) + (logStats.totalQuestions || 0);
-  const lcSolved = leetcodeData.solved?.solvedProblem || 0;
-  // Let striverSolved be totalSolved, or if they track strictly separate we just use totalSolved as Striver
   if (typeof renderBreakdownChart === "function") {
-    renderBreakdownChart(lcSolved, totalSolved);
+    renderBreakdownChart(leetcodeData.calendar, allLogs);
   }
 
   renderActivityFeed();
