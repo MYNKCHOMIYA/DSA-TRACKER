@@ -1,20 +1,26 @@
 // ============================================================
-// Charts Module — All Chart.js Rendering
+// Charts Module — All Chart.js Rendering + Custom SVG Donut
 // ============================================================
 
 let projectionChartInstance = null;
-let difficultyChartInstance = null;
+let _fullIdealData = [], _fullActualData = [], _fullProjectedData = [];
 
-// Chart.js global config for dark theme
-Chart.defaults.color = '#8b95b0';
-Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
-Chart.defaults.font.family = "'Inter', sans-serif";
+// Chart.js global defaults
+Chart.defaults.color = '#6b6280';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
 
 // ── Projection Line Chart ──
 function renderProjectionChart(idealData, actualData, projectedData) {
+  _fullIdealData = idealData;
+  _fullActualData = actualData;
+  _fullProjectedData = projectedData;
+  _drawProjectionChart(idealData, actualData, projectedData);
+}
+
+function _drawProjectionChart(idealData, actualData, projectedData) {
   const ctx = document.getElementById('projectionChart');
   if (!ctx) return;
-
   if (projectionChartInstance) projectionChartInstance.destroy();
 
   projectionChartInstance = new Chart(ctx, {
@@ -25,140 +31,235 @@ function renderProjectionChart(idealData, actualData, projectedData) {
         {
           label: 'Ideal Pace',
           data: idealData.map(d => d.value),
-          borderColor: 'rgba(255, 62, 165, 0.4)',
+          borderColor: 'rgba(255, 62, 165, 0.35)',
           borderDash: [6, 4],
-          borderWidth: 2,
+          borderWidth: 1.5,
           fill: false,
           pointRadius: 0,
-          tension: 0,
+          tension: 0.2,
         },
         {
           label: 'Actual Progress',
           data: actualData.map(d => d.value),
           borderColor: '#37b7ff',
-          borderWidth: 3,
+          borderWidth: 2.5,
           fill: {
             target: 'origin',
-            above: 'rgba(55, 183, 255, 0.08)',
+            above: 'rgba(55, 183, 255, 0.06)',
           },
-          pointRadius: 2,
+          pointRadius: 3,
           pointBackgroundColor: '#37b7ff',
-          tension: 0.3,
+          pointBorderColor: 'rgba(55,183,255,0.3)',
+          pointBorderWidth: 4,
+          pointHoverRadius: 5,
+          tension: 0.35,
         },
         {
           label: 'Projected',
           data: projectedData.map(d => d.value),
-          borderColor: 'rgba(255, 211, 79, 0.5)',
+          borderColor: 'rgba(255, 211, 79, 0.55)',
           borderDash: [4, 4],
-          borderWidth: 2,
+          borderWidth: 1.5,
           fill: false,
           pointRadius: 0,
-          tension: 0.3,
+          tension: 0.35,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: {
-        intersect: false,
-        mode: 'index',
-      },
+      interaction: { intersect: false, mode: 'index' },
       plugins: {
         legend: {
           position: 'top',
           labels: {
             usePointStyle: true,
             pointStyle: 'circle',
-            padding: 16,
-            font: { size: 11 },
+            padding: 18,
+            font: { size: 11, weight: '600' },
+            color: '#a39bb8',
           },
         },
         tooltip: {
-          backgroundColor: 'rgba(17, 24, 39, 0.95)',
-          borderColor: 'rgba(255,255,255,0.1)',
+          backgroundColor: 'rgba(10, 5, 24, 0.96)',
+          borderColor: 'rgba(255,62,165,0.2)',
           borderWidth: 1,
-          padding: 12,
-          titleFont: { size: 12, weight: '600' },
+          padding: 14,
+          titleFont: { size: 12, weight: '700' },
           bodyFont: { size: 11 },
-          cornerRadius: 8,
+          cornerRadius: 10,
+          callbacks: {
+            title: (items) => items[0].label,
+          }
         },
       },
       scales: {
         x: {
           grid: { display: false },
-          ticks: {
-            maxTicksLimit: 10,
-            font: { size: 10 },
-          },
+          border: { display: false },
+          ticks: { maxTicksLimit: 8, font: { size: 10 }, color: '#6b6280' },
         },
         y: {
           beginAtZero: true,
-          grid: { color: 'rgba(255,255,255,0.04)' },
-          ticks: { font: { size: 10 } },
+          grid: { color: 'rgba(255,255,255,0.03)' },
+          border: { display: false, dash: [4, 4] },
+          ticks: { font: { size: 10 }, color: '#6b6280' },
         },
       },
     },
   });
 }
 
-// ── Difficulty Donut Chart ──
+// ── Chart Timeline Filters ──
+function filterChart(range, btn) {
+  // Update active button
+  document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  if (!_fullIdealData.length) return;
+
+  const now = new Date();
+  let cutoff;
+
+  if (range === '1M') {
+    cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 1);
+  } else if (range === '3M') {
+    cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 3);
+  } else if (range === '6M') {
+    cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 6);
+  } else {
+    _drawProjectionChart(_fullIdealData, _fullActualData, _fullProjectedData);
+    return;
+  }
+
+  const cutoffStr = cutoff.toISOString().split('T')[0];
+  const filter = (arr) => arr.filter(d => d.label >= cutoffStr);
+  _drawProjectionChart(filter(_fullIdealData), filter(_fullActualData), filter(_fullProjectedData));
+}
+
+function filterChartByDates() {
+  const startEl = document.getElementById('chartStartDate');
+  const endEl = document.getElementById('chartEndDate');
+  if (!startEl || !endEl) return;
+  const start = startEl.value;
+  const end = endEl.value;
+  if (!start && !end) {
+    _drawProjectionChart(_fullIdealData, _fullActualData, _fullProjectedData);
+    return;
+  }
+  const filter = (arr) => arr.filter(d => {
+    if (start && d.label < start) return false;
+    if (end && d.label > end) return false;
+    return true;
+  });
+  _drawProjectionChart(filter(_fullIdealData), filter(_fullActualData), filter(_fullProjectedData));
+}
+
+// ── Custom SVG Donut Chart ──
 function renderDifficultyDonut(easy, medium, hard) {
-  const ctx = document.getElementById('difficultyChart');
-  if (!ctx) return;
+  const total = easy + medium + hard;
 
-  if (difficultyChartInstance) difficultyChartInstance.destroy();
+  // Update center
+  const centerNum = document.getElementById('donutCenterNum');
+  const centerLabel = document.getElementById('donutCenterLabel');
+  if (centerNum) centerNum.textContent = total || '—';
+  if (centerLabel) centerLabel.textContent = 'Total';
 
-  difficultyChartInstance = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Easy', 'Medium', 'Hard'],
-      datasets: [{
-        data: [easy, medium, hard],
-        backgroundColor: [
-          'rgba(55, 183, 255, 0.8)',
-          'rgba(255, 211, 79, 0.8)',
-          'rgba(255, 62, 165, 0.8)',
-        ],
-        borderColor: [
-          'rgba(55, 183, 255, 1)',
-          'rgba(255, 211, 79, 1)',
-          'rgba(255, 62, 165, 1)',
-        ],
-        borderWidth: 2,
-        hoverOffset: 8,
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      cutout: '65%',
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            usePointStyle: true,
-            pointStyle: 'circle',
-            padding: 16,
-            font: { size: 12 },
-          },
-        },
-        tooltip: {
-          backgroundColor: 'rgba(17, 24, 39, 0.95)',
-          borderColor: 'rgba(255,255,255,0.1)',
-          borderWidth: 1,
-          padding: 12,
-          cornerRadius: 8,
-          callbacks: {
-            label: (ctx) => {
-              const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-              const pct = total > 0 ? Math.round((ctx.raw / total) * 100) : 0;
-              return ` ${ctx.label}: ${ctx.raw} (${pct}%)`;
-            },
-          },
-        },
-      },
-    },
+  const legend = document.getElementById('donutLegend');
+  const svg = document.getElementById('donutSvg');
+  if (!legend || !svg) return;
+
+  const cx = 60, cy = 60, r = 46;
+  const circumference = 2 * Math.PI * r;
+  const gap = 4; // gap in degrees between arcs
+
+  const segments = [
+    { label: 'Easy',   count: easy,   color: '#37b7ff', shadow: 'rgba(55,183,255,0.4)' },
+    { label: 'Medium', count: medium, color: '#ffd34f', shadow: 'rgba(255,211,79,0.4)' },
+    { label: 'Hard',   count: hard,   color: '#ff3ea5', shadow: 'rgba(255,62,165,0.4)' },
+  ];
+
+  // Build SVG arcs
+  let svgHTML = `
+    <defs>
+      <filter id="arcGlow">
+        <feGaussianBlur stdDeviation="2.5" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="10"/>
+  `;
+
+  // Calculate angles
+  let currentAngle = -90;
+  const gapAngle = total > 0 ? (gap / 360) * 360 : 0;
+
+  segments.forEach((seg, i) => {
+    const fraction = total > 0 ? seg.count / total : 0;
+    const angleDeg = fraction * 360 - (total > 0 ? gapAngle : 0);
+    const angleRad = (angleDeg / 360) * circumference;
+    const offset = circumference - angleRad;
+    const startAngleRad = (currentAngle * Math.PI) / 180;
+
+    if (fraction > 0) {
+      svgHTML += `
+        <circle
+          cx="${cx}" cy="${cy}" r="${r}"
+          fill="none"
+          stroke="${seg.color}"
+          stroke-width="10"
+          stroke-linecap="round"
+          stroke-dasharray="${angleRad} ${circumference}"
+          stroke-dashoffset="${-((currentAngle + 90) / 360) * circumference}"
+          filter="url(#arcGlow)"
+          class="donut-arc"
+          data-idx="${i}"
+          style="transition: stroke-dasharray 1s cubic-bezier(0.4,0,0.2,1), opacity 0.3s; cursor:pointer; opacity:1;"
+        />
+      `;
+      currentAngle += angleDeg + gapAngle;
+    }
+  });
+
+  svg.innerHTML = svgHTML;
+
+  // Build Legend
+  const pct = (n) => total > 0 ? Math.round((n / total) * 100) : 0;
+  legend.innerHTML = segments.map((seg, i) => `
+    <div class="donut-legend-item" style="--item-color: ${seg.color}" data-idx="${i}" onclick="donutFocus(${i}, ${seg.count}, '${seg.label}')">
+      <div class="donut-legend-dot"></div>
+      <span class="donut-legend-name">${seg.label}</span>
+      <span class="donut-legend-count">${seg.count}</span>
+      <span class="donut-legend-pct">${pct(seg.count)}%</span>
+    </div>
+  `).join('');
+
+  // Arc hover effects
+  svg.querySelectorAll('.donut-arc').forEach(arc => {
+    arc.addEventListener('mouseenter', () => {
+      arc.style.strokeWidth = '12';
+    });
+    arc.addEventListener('mouseleave', () => {
+      arc.style.strokeWidth = '10';
+    });
+    arc.addEventListener('click', () => {
+      const idx = parseInt(arc.dataset.idx);
+      donutFocus(idx, segments[idx].count, segments[idx].label);
+    });
+  });
+}
+
+function donutFocus(idx, count, label) {
+  // Update center
+  const centerNum = document.getElementById('donutCenterNum');
+  const centerLabel = document.getElementById('donutCenterLabel');
+  if (centerNum) centerNum.textContent = count;
+  if (centerLabel) centerLabel.textContent = label;
+
+  // Toggle active on legend items
+  document.querySelectorAll('.donut-legend-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
   });
 }
 
@@ -173,10 +274,10 @@ function renderCategoryBars(categories, solvedPerCategory) {
     const pct = total > 0 ? Math.round((solved / total) * 100) : 0;
 
     let color;
-    if (pct >= 80) color = 'var(--accent-cyan)';
-    else if (pct >= 50) color = 'var(--accent-yellow)';
-    else if (pct >= 20) color = 'var(--accent-orange)';
-    else color = 'var(--accent-red)';
+    if (pct >= 80) color = '#34d399';
+    else if (pct >= 50) color = '#37b7ff';
+    else if (pct >= 20) color = '#ffd34f';
+    else color = '#ff3ea5';
 
     return `
       <div class="category-item">
@@ -185,7 +286,7 @@ function renderCategoryBars(categories, solvedPerCategory) {
           <span class="category-count">${solved}/${total}</span>
         </div>
         <div class="category-bar">
-          <div class="fill" style="width:${pct}%; background:${color}"></div>
+          <div class="fill" style="width:${pct}%; background:${color}; box-shadow: 0 0 6px ${color}44"></div>
         </div>
       </div>
     `;
@@ -213,13 +314,10 @@ function renderHeatmap(calendarData) {
     }
   }
 
-  // Generate last 20 weeks
   const cells = [];
   const today = new Date();
   const startDate = new Date(today);
   startDate.setDate(startDate.getDate() - (20 * 7));
-
-  // Align to start of week (Sunday)
   startDate.setDate(startDate.getDate() - startDate.getDay());
 
   const current = new Date(startDate);
@@ -233,19 +331,36 @@ function renderHeatmap(calendarData) {
     else if (count >= 2) level = 'level-2';
     else if (count >= 1) level = 'level-1';
 
-    cells.push(`<div class="heatmap-cell ${level}" title="${dateStr}: ${count} submissions"></div>`);
+    cells.push(`<div class="heatmap-cell ${level}" title="${dateStr}: ${count} submission${count !== 1 ? 's' : ''}"></div>`);
     current.setDate(current.getDate() + 1);
   }
 
   grid.innerHTML = cells.join('');
 }
 
-// ── Circular Progress (Today's Card) ──
+// ── Circular Progress (Today's Card — New Ring) ──
 function updateCircularProgress(done, target) {
   const pct = target > 0 ? Math.min(100, Math.round((done / target) * 100)) : 0;
-  const arc = document.getElementById('todayArc');
   const pctEl = document.getElementById('todayPct');
+  const arcEl = document.getElementById('todayArc');
 
-  if (arc) arc.setAttribute('stroke-dasharray', `${pct}, 100`);
   if (pctEl) pctEl.textContent = `${pct}%`;
+
+  // New SVG ring: circumference = 2 * PI * 26 = 163.36
+  if (arcEl && arcEl.tagName === 'circle') {
+    const circ = 163.36;
+    const filled = (pct / 100) * circ;
+    arcEl.setAttribute('stroke-dasharray', `${filled} ${circ}`);
+  }
+
+  // Update motivation text
+  const motEl = document.getElementById('todayMotivation');
+  const numEl = document.getElementById('todayNumDisplay');
+  if (numEl) numEl.textContent = done;
+  if (motEl) {
+    if (done === 0) { motEl.className = 'today-motivation start'; motEl.textContent = "Let's go!"; }
+    else if (pct < 50) { motEl.className = 'today-motivation start'; motEl.textContent = "Keep going!"; }
+    else if (pct < 100) { motEl.className = 'today-motivation half'; motEl.textContent = "Halfway there!"; }
+    else { motEl.className = 'today-motivation done'; motEl.textContent = "Crushed it!"; }
+  }
 }

@@ -28,30 +28,38 @@
       <div class="auth-card">
         <!-- Logo -->
         <div class="auth-logo">
-          <span class="logo-icon">🎯</span>
-          <h1>DSA Tracker</h1>
-          <p>Track your daily progress, crush your goals</p>
+          <div class="auth-brand">
+            <div class="auth-brand-mark">DSA</div>
+            <h1><span class="word-dsa">DSA</span><span class="word-tracker">.Track</span></h1>
+          </div>
+          <p class="auth-tagline">Master DSA · One problem at a time</p>
         </div>
 
         <!-- Tabs -->
         <div class="auth-tabs">
-          <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Log In</button>
-          <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Sign Up</button>
+          <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign In</button>
+          <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Create Account</button>
         </div>
 
         <!-- Login Form -->
         <form id="loginForm" onsubmit="handleLogin(event)">
           <div class="form-group">
-            <label for="loginEmail">Email</label>
-            <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email" inputmode="email">
+            <label for="loginEmail">Email Address</label>
+            <div class="input-wrap">
+              <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email" inputmode="email">
+              <span class="input-icon">✉</span>
+            </div>
           </div>
           <div class="form-group">
             <label for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+            <div class="input-wrap">
+              <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
+              <span class="input-icon">🔒</span>
+            </div>
           </div>
           <div class="form-error" id="loginError"></div>
           <button type="submit" class="btn btn-primary" id="loginBtn">
-            Log In
+            Sign In
           </button>
         </form>
 

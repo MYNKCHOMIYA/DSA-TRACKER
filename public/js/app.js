@@ -454,11 +454,34 @@ async function saveTodayLog() {
 
     todayLog.questionsDone = count;
     updateCircularProgress(count, userSettings.dailyTarget || 5);
-    showToast('Progress saved! ✨', 'success');
+    showToast('Progress saved!', 'success');
   } catch (err) {
     showToast('Failed to save. Try again.', 'error');
   }
 }
+
+// ── Adjust Today via +/- Buttons ──
+function adjustToday(delta) {
+  const input = document.getElementById('todayInput');
+  if (!input) return;
+  const current = parseInt(input.value) || 0;
+  const target = userSettings && userSettings.dailyTarget ? userSettings.dailyTarget : 5;
+  const next = Math.max(0, Math.min(50, current + delta));
+  input.value = next;
+
+  // Animate the number display
+  const numEl = document.getElementById('todayNumDisplay');
+  if (numEl) {
+    numEl.style.transform = delta > 0 ? 'translateY(-4px) scale(1.1)' : 'translateY(4px) scale(1.1)';
+    numEl.style.opacity = '0.5';
+    setTimeout(() => { numEl.style.transform = 'translateY(0) scale(1)'; numEl.style.opacity = '1'; }, 180);
+  }
+
+  updateCircularProgress(next, target);
+  clearTimeout(adjustToday._timer);
+  adjustToday._timer = setTimeout(() => saveTodayLog(), 900);
+}
+
 
 // ── Settings Modal ──
 function openSettings() {
@@ -564,15 +587,16 @@ async function saveDetailedLog() {
 
 // ── UI Helpers ──
 function updateNavbar(user) {
-  document.getElementById('navName').textContent = user.name || 'User';
+  const nameEl = document.getElementById('navName');
+  if (nameEl) nameEl.textContent = user.name || 'User';
 
-  if (leetcodeData.profile?.avatar) {
-    const img = document.getElementById('navAvatar');
-    img.src = leetcodeData.profile.avatar;
-    img.alt = user.name;
-    img.style.display = 'block';
+  const avatarEl = document.getElementById('navAvatar');
+  if (avatarEl) {
+    const initials = (user.name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    avatarEl.textContent = initials;
   }
 }
+
 
 function setupExternalLinks(user) {
   const row = document.getElementById('linksRow');

@@ -25,19 +25,25 @@
   <nav class="dashboard-nav">
     <div class="nav-content">
       <div class="nav-left">
-        <div class="nav-brand">
-          <span class="brand-icon">🎯</span>
-          <span>DSA Tracker</span>
-        </div>
+        <a class="nav-brand" href="/dashboard.html">
+          <div class="nav-brand-mark">DSA</div>
+          <span class="nav-brand-text"><span class="w1">DSA</span><span class="w2">.Track</span></span>
+        </a>
         <div class="nav-user" id="navUser">
-          <img src="" alt="" id="navAvatar" style="display:none">
+          <div class="user-avatar" id="navAvatar"></div>
           <span id="navName">Loading...</span>
         </div>
       </div>
       <div class="nav-right">
-        <button class="nav-btn" id="refreshBtn" onclick="refreshAllData()" title="Refresh Data">🔄</button>
-        <button class="nav-btn" onclick="openSettings()" title="Settings">⚙️</button>
-        <button class="nav-btn" onclick="logout()" title="Logout">🚪</button>
+        <button class="nav-btn" id="refreshBtn" onclick="refreshAllData()" title="Refresh Data">
+          <span class="nav-btn-dot blue"></span> Refresh
+        </button>
+        <button class="nav-btn" onclick="openSettings()" title="Settings">
+          <span class="nav-btn-dot gold"></span> Settings
+        </button>
+        <button class="nav-btn" onclick="logout()" title="Logout">
+          <span class="nav-btn-dot pink"></span> Logout
+        </button>
       </div>
     </div>
   </nav>
@@ -46,49 +52,53 @@
   <main class="dashboard-content">
     <!-- External Links -->
     <div class="links-row" id="linksRow" style="display:none">
-      <a class="link-chip" id="linkLeetcode" href="#" target="_blank">💻 LeetCode Profile</a>
-      <a class="link-chip" id="linkGithub" href="#" target="_blank">🐙 GitHub Striver Repo</a>
-      <a class="link-chip" href="https://takeuforward.org/dsa/strivers-a2z-sheet-learn-dsa-a-to-z" target="_blank">📋 Striver A2Z Sheet</a>
+      <a class="link-chip" id="linkLeetcode" href="#" target="_blank">LeetCode Profile</a>
+      <a class="link-chip" id="linkGithub" href="#" target="_blank">GitHub Repo</a>
+      <a class="link-chip" href="https://takeuforward.org/dsa/strivers-a2z-sheet-learn-dsa-a-to-z" target="_blank">Striver A2Z Sheet</a>
     </div>
 
     <!-- Stats Cards -->
     <div class="stats-grid">
       <!-- Today's Progress -->
       <div class="stat-card animate-in" id="cardToday">
-        <div class="card-icon">🎯</div>
-        <div class="card-label">Today's Progress</div>
-        <div class="today-input-row">
-          <input type="number" id="todayInput" min="0" max="50" value="0" onchange="saveTodayLog()">
-          <span>/ <span id="todayTarget">5</span></span>
-        </div>
-        <div class="circular-progress" id="todayCircle">
-          <svg viewBox="0 0 36 36">
-            <path class="track" d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0-31.831"/>
-            <path class="fill" id="todayArc" d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0-31.831" stroke-dasharray="0, 100"/>
+        <!-- SVG Ring -->
+        <svg style="position:absolute;width:0;height:0"><defs><linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff3ea5"/><stop offset="100%" stop-color="#37b7ff"/></linearGradient></defs></svg>
+        <div class="today-progress-ring" id="todayCircle">
+          <svg viewBox="0 0 60 60">
+            <circle class="today-ring-track" cx="30" cy="30" r="26"/>
+            <circle class="today-ring-fill" id="todayArc" cx="30" cy="30" r="26" stroke-dasharray="0 163.36"/>
           </svg>
-          <span class="percentage" id="todayPct">0%</span>
+          <div class="today-ring-pct" id="todayPct">0%</div>
         </div>
+        <div class="card-label">Today's Progress</div>
+        <div class="today-counter-row">
+          <button class="today-btn" id="todayMinus" onclick="adjustToday(-1)">−</button>
+          <span class="today-num" id="todayNumDisplay">0</span>
+          <span class="today-target-label">/ <span id="todayTarget">5</span></span>
+          <button class="today-btn" id="todayPlus" onclick="adjustToday(1)">+</button>
+        </div>
+        <div class="today-motivation" id="todayMotivation">Let's go!</div>
+        <!-- Hidden for JS compat -->
+        <input type="number" id="todayInput" min="0" max="50" value="0" style="display:none" onchange="saveTodayLog()">
+        <span id="todayArcOld" style="display:none"></span>
       </div>
 
       <!-- Streak -->
       <div class="stat-card animate-in" id="cardStreak">
-        <div class="card-icon"><span class="streak-fire">🔥</span></div>
         <div class="card-label">Current Streak</div>
         <div class="card-value" id="streakValue">—</div>
-        <div class="card-sub" id="streakSub">days</div>
+        <div class="card-sub" id="streakSub">day streak</div>
       </div>
 
       <!-- Total Solved -->
       <div class="stat-card animate-in" id="cardTotal">
-        <div class="card-icon">📊</div>
         <div class="card-label">Total Solved</div>
         <div class="card-value" id="totalSolved">—</div>
-        <div class="card-sub" id="totalSolvedSub">problems</div>
+        <div class="card-sub" id="totalSolvedSub">problems solved</div>
       </div>
 
       <!-- Est. Completion -->
       <div class="stat-card animate-in" id="cardEst">
-        <div class="card-icon">⏱️</div>
         <div class="card-label">Est. Completion</div>
         <div class="card-value" id="estDate" style="font-size:20px">—</div>
         <div class="card-sub" id="estSub"></div>
@@ -96,7 +106,6 @@
 
       <!-- Daily Pace -->
       <div class="stat-card animate-in" id="cardPace">
-        <div class="card-icon">📈</div>
         <div class="card-label">Daily Pace</div>
         <div class="card-value" id="paceValue">—</div>
         <div class="card-sub" id="paceSub">avg q/day</div>
@@ -104,12 +113,11 @@
 
       <!-- Sheet Progress -->
       <div class="stat-card animate-in" id="cardSheet">
-        <div class="card-icon">✅</div>
         <div class="card-label">Sheet Progress</div>
         <div class="card-value" id="sheetProgress">—</div>
         <div class="card-sub">
           <div class="category-bar" style="margin-top:8px">
-            <div class="fill" id="sheetBar" style="width:0%; background:var(--gradient-success)"></div>
+            <div class="fill" id="sheetBar" style="width:0%; background:var(--gradient-primary)"></div>
           </div>
         </div>
       </div>
@@ -118,17 +126,17 @@
     <!-- Timeline Section -->
     <div class="timeline-section animate-in">
       <div class="timeline-header">
-        <h3>📅 Timeline Progress</h3>
-        <div class="status-badge ontrack" id="statusBadge">🟡 Calculating...</div>
+        <h3>Timeline Progress</h3>
+        <div class="status-badge ontrack" id="statusBadge">Calculating...</div>
       </div>
       <div class="timeline-bar">
         <div class="progress" id="timelineProgress" style="width:0%">
-          <div class="marker" style="right:-12px"></div>
+          <div class="marker"></div>
         </div>
       </div>
       <div class="timeline-labels">
         <span id="timelineStart">Start</span>
-        <span id="timelineToday" style="color:var(--accent-blue)">Today</span>
+        <span id="timelineToday">Today</span>
         <span id="timelineEnd">Target</span>
       </div>
     </div>
@@ -136,19 +144,44 @@
     <!-- Charts Row: Projection + Difficulty -->
     <div class="charts-row">
       <div class="chart-card animate-in">
-        <h3>📈 Progress Projection</h3>
-        <p class="chart-sub">Ideal pace vs your actual progress</p>
-        <div class="chart-container" style="height:300px">
+        <h3>Progress Projection</h3>
+        <p class="chart-sub">Ideal pace vs your actual progress — use filters to zoom in</p>
+        <!-- Filter Controls -->
+        <div class="chart-controls">
+          <div class="chart-filter-group">
+            <button class="chart-filter-btn" onclick="filterChart('1M',this)">1M</button>
+            <button class="chart-filter-btn" onclick="filterChart('3M',this)">3M</button>
+            <button class="chart-filter-btn" onclick="filterChart('6M',this)">6M</button>
+            <button class="chart-filter-btn active" onclick="filterChart('ALL',this)">All</button>
+          </div>
+          <div class="chart-date-range">
+            <input type="date" id="chartStartDate" title="Start date">
+            <span class="chart-date-sep">→</span>
+            <input type="date" id="chartEndDate" title="End date">
+            <button class="chart-filter-btn active" onclick="filterChartByDates()" style="border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:4px 10px">Apply</button>
+          </div>
+        </div>
+        <div class="chart-container" style="height:280px">
           <canvas id="projectionChart"></canvas>
         </div>
       </div>
 
       <div class="chart-card animate-in">
-        <h3>💻 LeetCode Breakdown</h3>
+        <h3>LeetCode Breakdown</h3>
         <p class="chart-sub">Problems by difficulty</p>
-        <div class="chart-container" style="height:300px; display:flex; align-items:center; justify-content:center">
-          <canvas id="difficultyChart"></canvas>
+        <!-- Custom SVG Donut Chart -->
+        <div class="donut-wrap" id="donutWrap">
+          <div class="donut-svg-wrap">
+            <svg id="donutSvg" viewBox="0 0 120 120"></svg>
+            <div class="donut-center">
+              <div class="donut-center-num" id="donutCenterNum">—</div>
+              <div class="donut-center-label" id="donutCenterLabel">Total</div>
+            </div>
+          </div>
+          <div class="donut-legend" id="donutLegend"></div>
         </div>
+        <!-- Hidden canvas for Chart.js compat -->
+        <canvas id="difficultyChart" style="display:none"></canvas>
       </div>
     </div>
 
@@ -156,7 +189,7 @@
     <div class="two-col">
       <!-- Striver Categories -->
       <div class="categories-section animate-in">
-        <h3 style="margin-bottom:4px">📋 Striver A2Z Breakdown</h3>
+        <h3 style="margin-bottom:4px">Striver A2Z Breakdown</h3>
         <p class="chart-sub" style="margin-bottom:16px">Progress per category</p>
         <div id="categoriesContainer">
           <!-- Filled by JS -->
@@ -166,7 +199,7 @@
       <!-- Heatmap + Activity -->
       <div style="display:flex; flex-direction:column; gap:16px">
         <div class="chart-card animate-in">
-          <h3>🗓️ Submission Heatmap</h3>
+          <h3>Submission Heatmap</h3>
           <p class="chart-sub">LeetCode activity over the last months</p>
           <div class="heatmap-container" id="heatmapContainer">
             <div class="heatmap-grid" id="heatmapGrid"></div>
@@ -175,7 +208,7 @@
 
         <!-- Efficiency -->
         <div class="chart-card animate-in">
-          <h3>⚡ Efficiency</h3>
+          <h3>Efficiency</h3>
           <p class="chart-sub">Your solving speed analysis</p>
           <div class="gauge-container">
             <div class="gauge-value" id="gaugeValue">—</div>
@@ -215,7 +248,7 @@
 
     <!-- Activity Feed -->
     <div class="activity-feed animate-in">
-      <h3 style="margin-bottom:16px">📝 Recent Activity</h3>
+      <h3 style="margin-bottom:16px">Recent Activity</h3>
       <div id="activityList">
         <div style="text-align:center; color:var(--text-muted); padding:20px">Loading activity...</div>
       </div>
@@ -225,7 +258,7 @@
   <!-- Settings Modal -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal">
-      <h2>⚙️ Settings</h2>
+      <h2>Settings</h2>
 
       <div class="form-group">
         <label for="setDailyTarget">Daily Target</label>
@@ -277,7 +310,7 @@
   <!-- Log Modal -->
   <div class="modal-overlay log-modal" id="logModal">
     <div class="modal">
-      <h2>📝 Daily Log</h2>
+      <h2>Daily Log</h2>
       <div class="form-group">
         <label for="logQuestions">Questions Done Today</label>
         <input type="number" id="logQuestions" min="0">
@@ -302,19 +335,19 @@
   <!-- Mobile Bottom Navigation -->
   <div class="mobile-bottom-nav">
     <button class="mobile-nav-btn active" onclick="window.scrollTo(0,0)">
-      <span class="nav-icon">📊</span>
+      <span class="nav-icon">◉</span>
       <span>Home</span>
     </button>
     <button class="mobile-nav-btn" onclick="refreshAllData()">
-      <span class="nav-icon">🔄</span>
+      <span class="nav-icon">↻</span>
       <span>Refresh</span>
     </button>
     <button class="mobile-nav-btn" onclick="openLogModal()">
-      <span class="nav-icon">📝</span>
+      <span class="nav-icon">✎</span>
       <span>Log</span>
     </button>
     <button class="mobile-nav-btn" onclick="openSettings()">
-      <span class="nav-icon">⚙️</span>
+      <span class="nav-icon">◈</span>
       <span>Settings</span>
     </button>
   </div>
