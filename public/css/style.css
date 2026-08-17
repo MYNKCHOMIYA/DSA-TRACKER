@@ -119,6 +119,15 @@ a:hover {
   position: relative;
   overflow: hidden;
   padding: 20px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(5, 3, 10, 0.9) 0%,
+      rgba(5, 3, 10, 0.7) 50%,
+      rgba(5, 3, 10, 0.95) 100%
+    ),
+    url("../assets/images/login-bg.jpg") center/cover no-repeat;
+  background-attachment: fixed;
 }
 .auth-page::before {
   content: "";
@@ -127,11 +136,6 @@ a:hover {
   height: 700px;
   top: -200px;
   left: -200px;
-  background: radial-gradient(
-    circle,
-    rgba(255, 62, 165, 0.06) 0%,
-    transparent 60%
-  );
   animation: orbPulse 12s ease-in-out infinite;
   pointer-events: none;
 }
@@ -142,11 +146,7 @@ a:hover {
   height: 600px;
   bottom: -150px;
   right: -150px;
-  background: radial-gradient(
-    circle,
-    rgba(55, 183, 255, 0.06) 0%,
-    transparent 60%
-  );
+
   animation: orbPulse 16s ease-in-out infinite reverse;
   pointer-events: none;
 }
