@@ -23,46 +23,70 @@ function _drawProjectionChart(idealData, actualData, projectedData) {
   if (!ctx) return;
   if (projectionChartInstance) projectionChartInstance.destroy();
 
+  // Merge all unique ISO labels into a single sorted timeline
+  const labelSet = new Set([
+    ...idealData.map(d => d.label),
+    ...actualData.map(d => d.label),
+    ...projectedData.map(d => d.label),
+  ]);
+  const allLabels = [...labelSet].sort();
+
+  // Map each dataset onto the full timeline (null for missing points)
+  const mapToTimeline = (data) => {
+    const m = new Map(data.map(d => [d.label, d.value]));
+    return allLabels.map(l => m.has(l) ? m.get(l) : null);
+  };
+
+  // Display labels: use .display if available, else format from ISO
+  const displayLabels = allLabels.map(iso => {
+    const found = idealData.find(d => d.label === iso) ||
+                  actualData.find(d => d.label === iso) ||
+                  projectedData.find(d => d.label === iso);
+    if (found && found.display) return found.display;
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  });
+
   projectionChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: idealData.map(d => d.label),
+      labels: displayLabels,
       datasets: [
         {
           label: 'Ideal Pace',
-          data: idealData.map(d => d.value),
+          data: mapToTimeline(idealData),
           borderColor: 'rgba(255, 62, 165, 0.35)',
           borderDash: [6, 4],
           borderWidth: 1.5,
           fill: false,
           pointRadius: 0,
           tension: 0.2,
+          spanGaps: true,
         },
         {
           label: 'Actual Progress',
-          data: actualData.map(d => d.value),
+          data: mapToTimeline(actualData),
           borderColor: '#37b7ff',
           borderWidth: 2.5,
-          fill: {
-            target: 'origin',
-            above: 'rgba(55, 183, 255, 0.06)',
-          },
+          fill: { target: 'origin', above: 'rgba(55, 183, 255, 0.06)' },
           pointRadius: 3,
           pointBackgroundColor: '#37b7ff',
           pointBorderColor: 'rgba(55,183,255,0.3)',
           pointBorderWidth: 4,
           pointHoverRadius: 5,
           tension: 0.35,
+          spanGaps: false,
         },
         {
           label: 'Projected',
-          data: projectedData.map(d => d.value),
+          data: mapToTimeline(projectedData),
           borderColor: 'rgba(255, 211, 79, 0.55)',
           borderDash: [4, 4],
           borderWidth: 1.5,
           fill: false,
           pointRadius: 0,
           tension: 0.35,
+          spanGaps: true,
         },
       ],
     },

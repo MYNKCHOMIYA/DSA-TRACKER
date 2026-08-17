@@ -257,54 +257,65 @@ function renderTimeline() {
 // ── Projection Chart ──
 function renderProjection() {
   const startDate = new Date(userSettings.startDate || Date.now());
+  startDate.setHours(0, 0, 0, 0);
   const targetDate = userSettings.targetDate ? new Date(userSettings.targetDate) : null;
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const totalSolved = userSettings.manualSolvedCount || 0;
   const sheetTotal = userSettings.totalSheetProblems || 474;
 
   const endDate = targetDate || new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
-  const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+  const totalDays = Math.max(1, Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)));
   const daysPassed = Math.max(1, Math.ceil((today - startDate) / (1000 * 60 * 60 * 24)));
   const currentPace = totalSolved / daysPassed;
 
-  // Generate ideal line
+  // Helper: ISO date string for a Date (used as filter key)
+  const toISO = (d) => d.toISOString().split('T')[0];
+  // Helper: short display label
+  const toDisplay = (d) => d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+
+  // ── Ideal line: from startDate to endDate ──
   const idealData = [];
-  const numPoints = Math.min(totalDays, 120);
+  const numPoints = Math.min(totalDays, 150);
   for (let i = 0; i <= numPoints; i++) {
     const d = new Date(startDate);
     d.setDate(d.getDate() + Math.round((i / numPoints) * totalDays));
-    idealData.push({
-      label: formatChartDate(d),
-      value: Math.round((i / numPoints) * sheetTotal),
-    });
+    idealData.push({ label: toISO(d), display: toDisplay(d), value: Math.round((i / numPoints) * sheetTotal) });
   }
 
-  // Generate actual line (simplified: linear from 0 to current)
+  // ── Actual line: one point per day from startDate to TODAY (never past today) ──
   const actualData = [];
-  const actualPoints = Math.min(daysPassed, numPoints);
-  for (let i = 0; i <= actualPoints; i++) {
+  const maxActualDays = Math.min(daysPassed, 180);
+  // Use at most 60 points for performance, but always end exactly on today
+  const actualStep = Math.max(1, Math.floor(maxActualDays / 60));
+  for (let day = 0; day <= maxActualDays; day += actualStep) {
     const d = new Date(startDate);
-    d.setDate(d.getDate() + Math.round((i / actualPoints) * daysPassed));
-    actualData.push({
-      label: formatChartDate(d),
-      value: Math.round((i / actualPoints) * totalSolved),
-    });
+    d.setDate(d.getDate() + day);
+    // Hard cap: never go past today
+    if (d > today) { d.setTime(today.getTime()); }
+    const fraction = maxActualDays > 0 ? Math.min(day, maxActualDays) / maxActualDays : 0;
+    actualData.push({ label: toISO(d), display: toDisplay(d), value: Math.round(fraction * totalSolved) });
+    if (d.getTime() === today.getTime()) break;
+  }
+  // Ensure the last actual point is exactly today with the real total
+  if (actualData.length === 0 || actualData[actualData.length - 1].label !== toISO(today)) {
+    actualData.push({ label: toISO(today), display: toDisplay(today), value: totalSolved });
+  } else {
+    actualData[actualData.length - 1].value = totalSolved;
   }
 
-  // Generate projected line (from today forward at current pace)
-  const projectedData = new Array(actualPoints).fill(null).map((_, i) => ({
-    label: actualData[i]?.label || '',
-    value: null,
-  }));
-
-  const remainingDays = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
-  const projPoints = Math.min(remainingDays, numPoints - actualPoints);
-  for (let i = 0; i <= projPoints; i++) {
+  // ── Projected line: from today forward at current pace ──
+  // Pad with nulls to align with the actual data length
+  const projectedData = actualData.map(p => ({ label: p.label, display: p.display, value: null }));
+  const remainingDays = Math.max(0, Math.ceil((endDate - today) / (1000 * 60 * 60 * 24)));
+  const projStep = Math.max(1, Math.floor(remainingDays / 60));
+  for (let day = 0; day <= remainingDays; day += projStep) {
     const d = new Date(today);
-    d.setDate(d.getDate() + Math.round((i / Math.max(1, projPoints)) * remainingDays));
+    d.setDate(d.getDate() + day);
     projectedData.push({
-      label: formatChartDate(d),
-      value: Math.round(totalSolved + (currentPace * (i / Math.max(1, projPoints)) * remainingDays)),
+      label: toISO(d),
+      display: toDisplay(d),
+      value: Math.round(totalSolved + currentPace * day),
     });
   }
 
