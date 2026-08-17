@@ -1,75 +1,74 @@
 (() => {
   const words = [
-    // DSA Words
-    "Array",
-    "Linked List",
+    // DSA Concepts & Topics
+    "Data Structures",
+    "Algorithms",
     "Dynamic Programming",
-    "Dijkstra",
+    "Dijkstra's Algorithm",
+    "Time Complexity",
+    "Space Complexity",
     "O(N log N)",
-    "Binary Tree",
-    "Hash Table",
-    "Graph",
-    "DFS",
-    "BFS",
-    "Trie",
+    "Binary Search Tree",
+    "Hash Tables",
+    "Graph Theory",
+    "Depth-First Search",
+    "Breadth-First Search",
+    "Trie Data Structure",
     "Merge Sort",
     "Quick Sort",
-    "Heap",
-    "Two Pointers",
+    "Min Heap",
+    "Max Heap",
+    "Two Pointers Technique",
     "Sliding Window",
     "Backtracking",
-    "Divide and Conquer",
-    "Segment Tree",
-    "Greedy",
+    "Divide & Conquer",
+    "Segment Trees",
+    "Greedy Algorithms",
     "Memoization",
     "Recursion",
-    "Stack",
-    "Queue",
-    "Set",
-    "Map",
     "Bit Manipulation",
-    "Topological Sort",
-    "Kruskal",
-    "Prim",
+    "Topological Sorting",
+    "Kruskal's Algorithm",
+    "Prim's Algorithm",
     "Bellman-Ford",
     "Floyd-Warshall",
     "Union Find",
     "Disjoint Set",
     "Monotonic Stack",
-    "Binary Search",
     "Prefix Sum",
-    "Matrix",
-    "String",
-    // Quotes
+    "Matrix Traversal",
+
+    // Motivational Quotes
     "Keep Grinding",
-    "One more problem",
-    "Trust the process",
-    "Consistency is key",
-    "Never give up",
-    "Embrace the struggle",
-    "Failure is feedback",
-    "Code every day",
-    "Stay focused",
-    "You got this",
-    "Small steps",
-    "Progress over perfection",
-    "Debug your mind",
-    "Think first, code later",
-    "Master the basics",
-    "Stay hungry",
-    "Stay foolish",
-    "Level up",
-    "Push your limits",
-    "Break it down",
-    "Learn, build, repeat",
-    "Keep pushing",
+    "One More Problem",
+    "Trust The Process",
+    "Consistency Is Key",
+    "Never Give Up",
+    "Embrace The Struggle",
+    "Failure Is Feedback",
+    "Code Every Day",
+    "Stay Focused",
+    "You Got This",
+    "Small Steps",
+    "Progress Over Perfection",
+    "Debug Your Mind",
+    "Think First, Code Later",
+    "Master The Basics",
+    "Stay Hungry",
+    "Stay Foolish",
+    "Level Up",
+    "Push Your Limits",
+    "Learn, Build, Repeat",
+    "The Obstacle Is The Way",
+    "No Excuses",
   ];
 
+  // Elegant Grayscale / Silver Colors
   const colors = [
-    { fill: "#ff3ea5", glow: "rgba(255, 62, 165, 0.8)" }, // Pink
-    { fill: "#37b7ff", glow: "rgba(55, 183, 255, 0.8)" }, // Blue
-    { fill: "#a39bb8", glow: "rgba(163, 155, 184, 0.5)" }, // Muted Purple
-    { fill: "#ffffff", glow: "rgba(255, 255, 255, 0.8)" }, // White
+    { fill: "#ffffff", glow: "rgba(255, 255, 255, 0.5)" },
+    { fill: "#f8fafc", glow: "rgba(248, 250, 252, 0.3)" },
+    { fill: "#e2e8f0", glow: "rgba(226, 232, 240, 0.2)" },
+    { fill: "#94a3b8", glow: "transparent" },
   ];
 
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -87,166 +86,83 @@
   window.addEventListener("resize", resize);
   resize();
 
-  const activeWords = [];
-  const shards = [];
-  const MAX_WORDS = 40; // Limit for performance
+  // Create a continuous list of credits
+  const credits = [];
+  const SCROLL_SPEED = 0.5; // Very slow, elegant scroll
+  const LINE_HEIGHT = 60;
 
-  class Shard {
-    constructor(x, y, text, color) {
-      this.x = x;
-      this.y = y;
-      this.text = text;
-      this.color = color;
-      this.vx = (Math.random() - 0.5) * 8; // Explosive scatter horizontal
-      this.vy = (Math.random() - 1.0) * 6; // Explosive scatter upward
-      this.life = 1.0;
-      this.decay = Math.random() * 0.02 + 0.015;
-      this.rotation = Math.random() * Math.PI * 2;
-      this.rotSpeed = (Math.random() - 0.5) * 0.2;
-      this.size = Math.random() * 8 + 6;
-    }
+  // Boundary definition (Keep it on the left side, max 35% of screen width)
+  // to avoid crossing over the face or the login form.
 
-    update() {
-      this.vy += 0.15; // Gravity
-      this.x += this.vx;
-      this.y += this.vy;
-      this.rotation += this.rotSpeed;
-      this.life -= this.decay;
-    }
+  function initCredits() {
+    let currentY = h; // Start at the bottom of the screen
 
-    draw(ctx) {
-      if (this.life <= 0) return;
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      ctx.rotate(this.rotation);
-      ctx.font = `bold ${this.size}px sans-serif`;
-      ctx.fillStyle = this.color.fill;
-      ctx.globalAlpha = this.life;
-      ctx.fillText(this.text, 0, 0);
-      ctx.restore();
+    // Shuffle words for random order
+    const shuffled = [...words].sort(() => Math.random() - 0.5);
+
+    for (let i = 0; i < shuffled.length; i++) {
+      credits.push({
+        text: shuffled[i],
+        y: currentY,
+        color: colors[i % colors.length], // Cycle through elegant colors
+        size: Math.random() > 0.8 ? 24 : 18, // Occasionally larger text
+        xOffset: Math.random() * 40, // Slight random horizontal indent
+      });
+      currentY += LINE_HEIGHT + Math.random() * 40; // Random spacing between lines
     }
   }
 
-  class Word {
-    constructor() {
-      this.reset();
-      this.y = Math.random() * -h; // Random start high above
-    }
-
-    reset() {
-      this.text = words[Math.floor(Math.random() * words.length)];
-      this.color = colors[Math.floor(Math.random() * colors.length)];
-      this.size = Math.floor(Math.random() * 16) + 14;
-      this.x = Math.random() * (w - 200) + 50;
-      this.y = -50 - Math.random() * 500; // Start off-screen
-      this.vx = (Math.random() - 0.5) * 0.5; // Slight horizontal drift
-      this.vy = Math.random() * 0.5 + 0.5; // Initial fall speed
-      this.type = Math.random() > 0.5 ? "jelly" : "glass";
-
-      this.scaleX = 1;
-      this.scaleY = 1;
-      this.squishing = false;
-      this.squishTimer = 0;
-
-      this.dead = false;
-    }
-
-    update() {
-      if (this.dead) return;
-
-      if (!this.squishing) {
-        this.vy += 0.05; // Gravity
-        this.x += this.vx;
-        this.y += this.vy;
-
-        // Air stretch (falling fast stretches Y)
-        this.scaleY = 1 + Math.min(this.vy * 0.05, 0.5);
-        this.scaleX = 1 - Math.min(this.vy * 0.02, 0.2);
-      } else {
-        this.squishTimer--;
-        if (this.squishTimer <= 0) {
-          this.squishing = false;
-          // Rebound
-          this.vy = -this.vy * 0.5; // Bounce up
-        }
-      }
-
-      // Hit floor
-      if (this.y >= h - 20 && !this.squishing) {
-        if (this.type === "glass") {
-          // Shatter
-          const chars = this.text.split("");
-          let curX = this.x;
-          chars.forEach((c) => {
-            shards.push(new Shard(curX, this.y, c, this.color));
-            curX += this.size * 0.6; // Approximate width
-          });
-          this.dead = true;
-        } else {
-          // Jelly bounce
-          this.y = h - 20; // Snap to floor
-          this.squishing = true;
-          this.squishTimer = 6;
-          // Extreme squish effect
-          this.scaleY = 0.4;
-          this.scaleX = 1.6;
-
-          // Stop if bounced too little
-          if (Math.abs(this.vy) < 2) {
-            this.dead = true;
-          }
-        }
-      }
-
-      // Out of bounds (e.g., drifting sideways)
-      if (this.x < -200 || this.x > w + 200) {
-        this.dead = true;
-      }
-    }
-
-    draw(ctx) {
-      if (this.dead) return;
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      ctx.scale(this.scaleX, this.scaleY);
-
-      ctx.font = `bold ${this.size}px 'Inter', sans-serif`;
-      ctx.fillStyle = this.color.fill;
-
-      // Glow
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = this.color.glow;
-
-      ctx.fillText(this.text, 0, 0);
-      ctx.restore();
-    }
-  }
-
-  // Spawn initial words
-  for (let i = 0; i < MAX_WORDS; i++) {
-    activeWords.push(new Word());
-  }
+  initCredits();
 
   function animate() {
     ctx.clearRect(0, 0, w, h);
 
-    // Update & Draw Words
-    for (let i = 0; i < activeWords.length; i++) {
-      let w = activeWords[i];
-      w.update();
-      if (w.dead) {
-        w.reset(); // Recycle the object
-      }
-      w.draw(ctx);
-    }
+    const boundaryWidth = Math.min(w * 0.35, 400); // Max 35% of screen, capped at 400px
+    const startX = 40; // 40px from the left edge
 
-    // Update & Draw Shards
-    for (let i = shards.length - 1; i >= 0; i--) {
-      let s = shards[i];
-      s.update();
-      s.draw(ctx);
-      if (s.life <= 0) {
-        shards.splice(i, 1);
+    for (let i = 0; i < credits.length; i++) {
+      let credit = credits[i];
+
+      // Move up
+      credit.y -= SCROLL_SPEED;
+
+      // Draw if visible on screen
+      if (credit.y > -100 && credit.y < h + 100) {
+        ctx.save();
+
+        // Fade in from bottom and fade out at top
+        let opacity = 1;
+        if (credit.y > h - 150) {
+          opacity = (h - credit.y) / 150; // Fade in at bottom
+        } else if (credit.y < 150) {
+          opacity = credit.y / 150; // Fade out at top
+        }
+
+        ctx.globalAlpha = Math.max(0, opacity);
+
+        ctx.font = `${credit.size === 24 ? "bold" : "normal"} ${credit.size}px 'Space Grotesk', sans-serif`;
+        ctx.fillStyle = credit.color.fill;
+
+        if (credit.color.glow !== "transparent") {
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = credit.color.glow;
+        }
+
+        // Align left within the boundary
+        ctx.textAlign = "left";
+        ctx.fillText(credit.text, startX + credit.xOffset, credit.y);
+
+        ctx.restore();
+      }
+
+      // Recycle to bottom if it goes off top
+      if (credit.y < -100) {
+        // Find the lowest Y currently in the array
+        let lowestY = Math.max(...credits.map((c) => c.y));
+        credit.y = Math.max(lowestY, h) + LINE_HEIGHT + Math.random() * 40;
+        // Randomize position and color again
+        credit.xOffset = Math.random() * 40;
+        credit.color = colors[Math.floor(Math.random() * colors.length)];
       }
     }
 
