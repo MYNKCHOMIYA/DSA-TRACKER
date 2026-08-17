@@ -4,6 +4,7 @@
 
 let projectionChartInstance = null;
 let _fullIdealData = [], _fullActualData = [], _fullProjectedData = [];
+let _activeIdealData = [], _activeActualData = [], _activeProjectedData = [];
 
 // Chart.js global defaults
 Chart.defaults.color = '#6b6280';
@@ -15,6 +16,9 @@ function renderProjectionChart(idealData, actualData, projectedData) {
   _fullIdealData = idealData;
   _fullActualData = actualData;
   _fullProjectedData = projectedData;
+  _activeIdealData = idealData;
+  _activeActualData = actualData;
+  _activeProjectedData = projectedData;
   _drawProjectionChart(idealData, actualData, projectedData);
 }
 
@@ -137,21 +141,18 @@ function _drawProjectionChart(idealData, actualData, projectedData) {
 
 // ── Chart Timeline Filters ──
 function zoomChartWithSlider(percent) {
-  if (!_fullIdealData || _fullIdealData.length === 0) return;
+  if (!_activeIdealData || _activeIdealData.length === 0) return;
   
-  // Clear button active states since we are using custom zoom
-  document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
-  
-  const totalPoints = _fullIdealData.length;
+  const totalPoints = _activeIdealData.length;
   // min zoom = 10% (or at least 7 points), max = 100%
   const pct = parseInt(percent);
   let pointsToShow = Math.max(7, Math.floor((pct / 100) * totalPoints));
   
-  const slicedIdeal = _fullIdealData.slice(-pointsToShow);
+  const slicedIdeal = _activeIdealData.slice(-pointsToShow);
   const cutoffLabel = slicedIdeal[0].label;
   
   const filter = (arr) => arr.filter(d => d.label >= cutoffLabel);
-  _drawProjectionChart(filter(_fullIdealData), filter(_fullActualData), filter(_fullProjectedData));
+  _drawProjectionChart(filter(_activeIdealData), filter(_activeActualData), filter(_activeProjectedData));
 }
 
 function filterChart(range, btn) {
@@ -175,13 +176,19 @@ function filterChart(range, btn) {
   } else if (range === '6M') {
     cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 6);
   } else {
+    _activeIdealData = _fullIdealData;
+    _activeActualData = _fullActualData;
+    _activeProjectedData = _fullProjectedData;
     _drawProjectionChart(_fullIdealData, _fullActualData, _fullProjectedData);
     return;
   }
 
   const cutoffStr = cutoff.toISOString().split('T')[0];
   const filter = (arr) => arr.filter(d => d.label >= cutoffStr);
-  _drawProjectionChart(filter(_fullIdealData), filter(_fullActualData), filter(_fullProjectedData));
+  _activeIdealData = filter(_fullIdealData);
+  _activeActualData = filter(_fullActualData);
+  _activeProjectedData = filter(_fullProjectedData);
+  _drawProjectionChart(_activeIdealData, _activeActualData, _activeProjectedData);
 }
 
 function filterChartByDates() {
@@ -195,6 +202,9 @@ function filterChartByDates() {
   const start = startEl.value;
   const end = endEl.value;
   if (!start && !end) {
+    _activeIdealData = _fullIdealData;
+    _activeActualData = _fullActualData;
+    _activeProjectedData = _fullProjectedData;
     _drawProjectionChart(_fullIdealData, _fullActualData, _fullProjectedData);
     return;
   }
@@ -203,7 +213,10 @@ function filterChartByDates() {
     if (end && d.label > end) return false;
     return true;
   });
-  _drawProjectionChart(filter(_fullIdealData), filter(_fullActualData), filter(_fullProjectedData));
+  _activeIdealData = filter(_fullIdealData);
+  _activeActualData = filter(_fullActualData);
+  _activeProjectedData = filter(_fullProjectedData);
+  _drawProjectionChart(_activeIdealData, _activeActualData, _activeProjectedData);
 }
 
 // ── Custom SVG Donut Chart ──
