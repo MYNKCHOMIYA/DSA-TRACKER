@@ -316,6 +316,52 @@
         </div>
       </div>
 
+      <!-- Platform Breakdown -->
+      <div class="chart-card animate-in" style="margin-bottom: 24px">
+        <h3>Platform Breakdown</h3>
+        <p class="chart-sub">Questions solved on LeetCode vs Striver Sheet</p>
+        <div class="two-col" style="margin-top: 24px; align-items: center">
+          <div
+            class="chart-container"
+            style="height: 220px; display: flex; justify-content: center"
+          >
+            <canvas id="platformBreakdownChart"></canvas>
+          </div>
+          <div class="breakdown-table-container">
+            <table
+              class="glass-table"
+              style="
+                width: 100%;
+                border-collapse: collapse;
+                text-align: left;
+                font-size: 14px;
+              "
+            >
+              <thead>
+                <tr
+                  style="
+                    border-bottom: 1px solid var(--glass-border);
+                    color: var(--text-muted);
+                    font-size: 11px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                  "
+                >
+                  <th style="padding: 12px 8px">Platform</th>
+                  <th style="padding: 12px 8px; text-align: right">Solved</th>
+                  <th style="padding: 12px 8px; text-align: right">
+                    % of Total
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="platformBreakdownTableBody">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- Charts Row: Donut + Heatmap -->
       <div class="two-col">
         <div class="chart-card animate-in">
