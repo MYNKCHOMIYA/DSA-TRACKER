@@ -110,46 +110,25 @@ a:hover {
   border-radius: 4px;
 }
 
-/* ── AUTH ── */
 .auth-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   position: relative;
   overflow: hidden;
-  padding: 20px;
+  padding: 20px 12% 20px 20px;
   background:
     linear-gradient(
       135deg,
-      rgba(5, 3, 10, 0.9) 0%,
-      rgba(5, 3, 10, 0.7) 50%,
+      rgba(5, 3, 10, 0.95) 0%,
+      rgba(5, 3, 10, 0.35) 50%,
       rgba(5, 3, 10, 0.95) 100%
     ),
     url("../assets/images/login-bg.jpg") center/cover no-repeat;
   background-attachment: fixed;
 }
-.auth-page::before {
-  content: "";
-  position: absolute;
-  width: 700px;
-  height: 700px;
-  top: -200px;
-  left: -200px;
-  animation: orbPulse 12s ease-in-out infinite;
-  pointer-events: none;
-}
-.auth-page::after {
-  content: "";
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  bottom: -150px;
-  right: -150px;
-
-  animation: orbPulse 16s ease-in-out infinite reverse;
-  pointer-events: none;
-}
+/* Removed old ::before and ::after orb animations that were causing color changing layer conflicts */
 @keyframes orbPulse {
   0%,
   100% {
@@ -1926,6 +1905,10 @@ input[type="datetime-local"] {
   }
 }
 @media (max-width: 768px) {
+  .auth-page {
+    justify-content: center;
+    padding: 20px;
+  }
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
