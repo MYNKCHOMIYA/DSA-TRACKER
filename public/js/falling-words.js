@@ -114,29 +114,57 @@
   const LINE_HEIGHT = 80;
   let isAnimating = true;
 
-  function randomRGB() {
-    const r = Math.floor(Math.random() * 256);
-    const g = Math.floor(Math.random() * 256);
-    const b = Math.floor(Math.random() * 256);
-    return `rgb(${r}, ${g}, ${b})`;
+  function checkOverlap(x, y, width, height, list) {
+    for (let c of list) {
+      if (!c.width) continue;
+      // 20px padding around each word
+      if (
+        x < c.x + c.width + 20 &&
+        x + width + 20 > c.x &&
+        y < c.y + 20 &&
+        y + height + 20 > c.y - c.size
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 
   function initCredits() {
     credits = [];
-    // We want a lot of items spread across the entire width and height
-    const totalItems = 150;
-    let currentY = 0;
+    const totalItems = 100; // slightly reduced to ensure it fits without overlap
 
     for (let i = 0; i < totalItems; i++) {
       const text = words[Math.floor(Math.random() * words.length)];
-      credits.push({
-        text: text,
-        y: Math.random() * h * 2 - h, // Spread vertically
-        x: Math.random() * w, // Spread horizontally across full screen
-        color: colors[Math.floor(Math.random() * colors.length)],
-        size: Math.random() > 0.8 ? 24 : 16,
-        hoveredColor: null, // Will store random color when hovered
-      });
+      const size = Math.random() > 0.8 ? 24 : 16;
+      ctx.font = `${size === 24 ? "bold" : "normal"} ${size}px 'Space Grotesk', sans-serif`;
+      const width = ctx.measureText(text).width;
+
+      let x, y;
+      let attempts = 0;
+      let placed = false;
+
+      while (attempts < 50 && !placed) {
+        x = Math.random() * (w - width - 40) + 20;
+        y = Math.random() * h * 3 - h; // Spread vertically across 3 screens
+
+        if (!checkOverlap(x, y, width, size, credits)) {
+          placed = true;
+        }
+        attempts++;
+      }
+
+      if (placed) {
+        credits.push({
+          text: text,
+          y: y,
+          x: x,
+          width: width,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: size,
+          scale: 1,
+        });
+      }
     }
   }
 
@@ -154,62 +182,81 @@
 
       // Draw if visible on screen
       if (credit.y > -100 && credit.y < h + 100) {
-        ctx.save();
-
-        // Measure text for accurate hover detection
-        ctx.font = `${credit.size === 24 ? "bold" : "normal"} ${credit.size}px 'Space Grotesk', sans-serif`;
-        const textWidth = ctx.measureText(credit.text).width;
-
-        // Check hover collision (approximate bounding box)
+        // Check hover collision
         const isHovered =
           mouseX >= credit.x &&
-          mouseX <= credit.x + textWidth &&
+          mouseX <= credit.x + credit.width &&
           mouseY >= credit.y - credit.size &&
           mouseY <= credit.y;
 
+        // Smoothly adjust scale
         if (isHovered) {
-          if (!credit.hoveredColor) {
-            const rgb = randomRGB();
-            credit.hoveredColor = { fill: rgb, glow: rgb };
-          }
+          credit.scale = Math.min((credit.scale || 1) + 0.05, 1.25);
         } else {
-          // Slowly lose the hover color if not hovered (or just instantly snap back)
-          // For simplicity, snap back to default:
-          credit.hoveredColor = null;
+          credit.scale = Math.max((credit.scale || 1) - 0.05, 1);
         }
 
-        // Fade in from bottom and fade out at top
+        ctx.save();
+
+        // Translate for scaling from center of the word's left edge
+        ctx.translate(credit.x, credit.y);
+        ctx.scale(credit.scale, credit.scale);
+
         let opacity = 1;
         if (credit.y > h - 150) {
           opacity = (h - credit.y) / 150;
         } else if (credit.y < 150) {
           opacity = credit.y / 150;
         }
-
         ctx.globalAlpha = Math.max(0, opacity);
 
-        const activeColor = credit.hoveredColor || credit.color;
+        ctx.font = `${credit.size === 24 ? "bold" : "normal"} ${credit.size}px 'Space Grotesk', sans-serif`;
 
-        ctx.fillStyle = activeColor.fill;
+        // Elegant hover effect
+        ctx.fillStyle = credit.scale > 1.05 ? "#ffffff" : credit.color.fill;
 
-        if (activeColor.glow !== "transparent") {
-          ctx.shadowBlur = isHovered ? 20 : 10;
-          ctx.shadowColor = activeColor.glow;
+        if (credit.scale > 1.05 || credit.color.glow !== "transparent") {
+          ctx.shadowBlur = credit.scale > 1.05 ? 20 : 10;
+          ctx.shadowColor =
+            credit.scale > 1.05 ? "rgba(255,255,255,0.8)" : credit.color.glow;
         }
 
         ctx.textAlign = "left";
-        ctx.fillText(credit.text, credit.x, credit.y);
+        ctx.fillText(credit.text, 0, 0);
 
         ctx.restore();
       }
 
       // Recycle to bottom if it goes off top
       if (credit.y < -100) {
-        credit.y = h + Math.random() * 200;
-        credit.x = Math.random() * w; // New random horizontal position
-        credit.color = colors[Math.floor(Math.random() * colors.length)];
+        let placed = false;
+        let attempts = 0;
+        let newX, newY;
+
+        // Ensure new text is sized correctly for collision check
         credit.text = words[Math.floor(Math.random() * words.length)];
-        credit.hoveredColor = null;
+        ctx.font = `${credit.size === 24 ? "bold" : "normal"} ${credit.size}px 'Space Grotesk', sans-serif`;
+        credit.width = ctx.measureText(credit.text).width;
+
+        while (attempts < 20 && !placed) {
+          newX = Math.random() * (w - credit.width - 40) + 20;
+          newY = h + Math.random() * 200 + 50; // Below screen
+
+          if (!checkOverlap(newX, newY, credit.width, credit.size, credits)) {
+            placed = true;
+          }
+          attempts++;
+        }
+
+        if (placed) {
+          credit.y = newY;
+          credit.x = newX;
+          credit.color = colors[Math.floor(Math.random() * colors.length)];
+          credit.scale = 1;
+        } else {
+          // If couldn't place without overlap, just push it far down to try again later
+          credit.y = h + 1000;
+        }
       }
     }
 
