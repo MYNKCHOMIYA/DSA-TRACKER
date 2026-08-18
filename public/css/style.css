@@ -815,7 +815,23 @@ input:-webkit-autofill:active {
   transform: translateY(0);
 }
 .nav-btn.refreshing {
-  animation: spin 1s linear infinite;
+  animation: refresh-pulse 1.2s ease-in-out infinite;
+  border-color: var(--accent-blue);
+  background: rgba(55, 183, 255, 0.1);
+  color: #fff;
+  pointer-events: none;
+}
+.nav-btn.refreshing .nav-btn-dot {
+  animation: refresh-blink 0.5s alternate infinite;
+}
+@keyframes refresh-pulse {
+  0% { box-shadow: 0 0 5px rgba(55, 183, 255, 0.2); }
+  50% { box-shadow: 0 0 15px rgba(55, 183, 255, 0.5); }
+  100% { box-shadow: 0 0 5px rgba(55, 183, 255, 0.2); }
+}
+@keyframes refresh-blink {
+  from { opacity: 0.4; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.4); box-shadow: 0 0 10px var(--accent-blue); }
 }
 .nav-btn-dot {
   width: 6px;
