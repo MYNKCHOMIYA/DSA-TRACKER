@@ -64,10 +64,10 @@ function _drawProjectionChart(idealData, actualData, projectedData) {
         {
           label: "Ideal Pace",
           data: mapToTimeline(idealData),
-          borderColor: "rgba(255, 62, 165, 0.35)",
+          borderColor: "rgba(122, 62, 84, 0.35)",
           borderDash: [6, 4],
           borderWidth: 1.5,
-          fill: { target: "origin", above: "rgba(255, 62, 165, 0.05)" },
+          fill: { target: "origin", above: "rgba(122, 62, 84, 0.05)" },
           pointRadius: 0,
           tension: 0.2,
           spanGaps: true,
@@ -75,12 +75,12 @@ function _drawProjectionChart(idealData, actualData, projectedData) {
         {
           label: "Actual Progress",
           data: mapToTimeline(actualData),
-          borderColor: "#37b7ff",
+          borderColor: "#8c5970",
           borderWidth: 2.5,
-          fill: { target: "origin", above: "rgba(55, 183, 255, 0.06)" },
+          fill: { target: "origin", above: "rgba(140, 89, 112, 0.06)" },
           pointRadius: 3,
-          pointBackgroundColor: "#37b7ff",
-          pointBorderColor: "rgba(55,183,255,0.3)",
+          pointBackgroundColor: "#8c5970",
+          pointBorderColor: "rgba(140, 89, 112,0.3)",
           pointBorderWidth: 4,
           pointHoverRadius: 5,
           tension: 0.35,
@@ -165,12 +165,12 @@ function _drawProjectionChart(idealData, actualData, projectedData) {
               ctx.moveTo(x, yAxis.top);
               ctx.lineTo(x, yAxis.bottom);
               ctx.lineWidth = 1.5;
-              ctx.strokeStyle = "rgba(255, 62, 165, 0.5)";
+              ctx.strokeStyle = "rgba(122, 62, 84, 0.5)";
               ctx.setLineDash([4, 4]);
               ctx.stroke();
 
               // Draw "TODAY" badge
-              ctx.fillStyle = "rgba(255, 62, 165, 0.9)";
+              ctx.fillStyle = "rgba(122, 62, 84, 0.9)";
               ctx.fillRoundRect = function (x, y, w, h, r) {
                 this.beginPath();
                 this.moveTo(x + r, y);
@@ -306,20 +306,20 @@ function renderDifficultyDonut(easy, medium, hard) {
     {
       label: "Easy",
       count: easy,
-      color: "#37b7ff",
-      shadow: "rgba(55,183,255,0.4)",
+      color: "#8c5970",
+      shadow: "rgba(140, 89, 112,0.4)",
     },
     {
       label: "Medium",
       count: medium,
-      color: "#ffd34f",
+      color: "#9f657a",
       shadow: "rgba(255,211,79,0.4)",
     },
     {
       label: "Hard",
       count: hard,
-      color: "#ff3ea5",
-      shadow: "rgba(255,62,165,0.4)",
+      color: "#7A3E54",
+      shadow: "rgba(122, 62, 84,0.4)",
     },
   ];
 
@@ -423,9 +423,9 @@ function renderCategoryBars(categories, solvedPerCategory) {
 
       let color;
       if (pct >= 80) color = "#34d399";
-      else if (pct >= 50) color = "#37b7ff";
-      else if (pct >= 20) color = "#ffd34f";
-      else color = "#ff3ea5";
+      else if (pct >= 50) color = "#8c5970";
+      else if (pct >= 20) color = "#9f657a";
+      else color = "#7A3E54";
 
       return `
       <div class="category-item">
@@ -589,7 +589,7 @@ function renderBreakdownChart(lcCalendarData, allLogs) {
         {
           label: "Striver Sheet",
           data: striverArray,
-          backgroundColor: "#ff3ea5",
+          backgroundColor: "#7A3E54",
           borderRadius: 4,
         },
       ],
@@ -638,7 +638,7 @@ function renderBreakdownChart(lcCalendarData, allLogs) {
         <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
           <td style="padding: 12px 8px; color: #a39bb8;">${d}</td>
           <td style="padding: 12px 8px; text-align: right; color: #ffb84d;">${lc}</td>
-          <td style="padding: 12px 8px; text-align: right; color: #ff3ea5;">${st}</td>
+          <td style="padding: 12px 8px; text-align: right; color: #7A3E54;">${st}</td>
           <td style="padding: 12px 8px; text-align: right; color: white; font-weight: 600;">${total}</td>
         </tr>
       `;
