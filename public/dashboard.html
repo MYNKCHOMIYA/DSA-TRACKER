@@ -593,6 +593,14 @@
           <input type="text" id="setGhRepo" />
         </div>
 
+        <div class="settings-danger-zone" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--glass-border);">
+          <h4 style="color: #ff4d4d; margin-bottom: 8px;">Danger Zone</h4>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Once you delete your account, there is no going back. Please be certain.</p>
+          <button type="button" class="nav-btn" onclick="deleteAccount()" style="border-color: rgba(255, 77, 77, 0.5); color: #ff4d4d; width: 100%; justify-content: center;" id="deleteAccountBtn">
+            Delete Account
+          </button>
+        </div>
+
         <div class="modal-actions">
           <button class="btn btn-secondary" onclick="closeSettings()">
             Cancel

@@ -773,6 +773,34 @@ async function saveSettings() {
   }
 }
 
+async function deleteAccount() {
+  if (!confirm("Are you absolutely sure you want to delete your account? This action cannot be undone and all your progress will be permanently lost.")) {
+    return;
+  }
+  
+  const btn = document.getElementById("deleteAccountBtn");
+  if (btn) btn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;border-bottom-color:#ff4d4d;margin-right:8px;"></span> Deleting...';
+  
+  try {
+    const res = await fetch("/api/auth/me", {
+      method: "DELETE",
+      headers: getAuthHeaders()
+    });
+    
+    if (res.ok) {
+      localStorage.removeItem("dsa_tracker_token");
+      window.location.href = "/index.html";
+    } else {
+      const data = await res.json();
+      showToast(data.error || "Failed to delete account", "error");
+      if (btn) btn.innerHTML = 'Delete Account';
+    }
+  } catch (err) {
+    showToast("Network error. Try again.", "error");
+    if (btn) btn.innerHTML = 'Delete Account';
+  }
+}
+
 // Close modals on overlay click
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("modal-overlay")) {

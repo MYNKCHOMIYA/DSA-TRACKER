@@ -84,4 +84,20 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
+// DELETE /api/auth/me — Delete current user account
+router.delete('/me', auth, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    // Delete all logs for user
+    const DailyLog = require('../models/DailyLog');
+    await DailyLog.deleteMany({ userId });
+    // Delete user
+    await User.findByIdAndDelete(userId);
+    res.json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    console.error('Account deletion error:', error);
+    res.status(500).json({ error: 'Server error deleting account.' });
+  }
+});
+
 module.exports = router;

@@ -580,7 +580,7 @@ input:-webkit-autofill:active {
   width: 100%;
   height: 5px;
   border-radius: var(--radius-full);
-  background: linear-gradient(90deg, var(--accent-pink), var(--accent-blue));
+  background: var(--accent-pink);
   outline: none;
   cursor: pointer;
 }
