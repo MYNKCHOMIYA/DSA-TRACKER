@@ -603,7 +603,17 @@ function renderActivityFeed() {
 
 // ── Efficiency Section ──
 function renderEfficiency() {
-  const totalSolved = userSettings.manualSolvedCount || 0;
+  const todayDone = todayLog.questionsDone || 0;
+  let previousSolved = 0;
+  const todayIso = new Date().toISOString().split("T")[0];
+  if (Array.isArray(allLogs)) {
+    allLogs.forEach((log) => {
+      if (log.date !== todayIso) {
+        previousSolved += log.questionsDone;
+      }
+    });
+  }
+  const totalSolved = (userSettings.manualSolvedCount || 0) + previousSolved + todayDone;
   const sheetTotal = userSettings.totalSheetProblems || 474;
   const remaining = Math.max(0, sheetTotal - totalSolved);
   const dailyTarget = userSettings.dailyTarget || 5;
