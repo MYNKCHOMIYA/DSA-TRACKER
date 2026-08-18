@@ -1,5 +1,5 @@
 // DSA Progress Tracker — Service Worker
-const CACHE_NAME = "dsa-tracker-v4";
+const CACHE_NAME = "dsa-tracker-v5";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
