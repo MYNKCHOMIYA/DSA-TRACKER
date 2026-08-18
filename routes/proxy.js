@@ -121,9 +121,19 @@ router.get('/github/repo', auth, async (req, res) => {
       return res.json({ data: req.user.cachedGitHub.repo, cached: true });
     }
 
-    const response = await fetch(`${GITHUB_API}/repos/${githubUsername}/${githubStriverRepo}/contents`);
-    if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
-    const data = await response.json();
+    const repoInfoRes = await fetch(`${GITHUB_API}/repos/${githubUsername}/${githubStriverRepo}`, {
+      headers: { 'User-Agent': 'DSA-Tracker' }
+    });
+    if (!repoInfoRes.ok) throw new Error(`GitHub Info error: ${repoInfoRes.status}`);
+    const repoInfo = await repoInfoRes.json();
+    const branch = repoInfo.default_branch || 'main';
+
+    const response = await fetch(`${GITHUB_API}/repos/${githubUsername}/${githubStriverRepo}/git/trees/${branch}?recursive=1`, {
+      headers: { 'User-Agent': 'DSA-Tracker' }
+    });
+    if (!response.ok) throw new Error(`GitHub Tree error: ${response.status}`);
+    const treeData = await response.json();
+    const data = treeData.tree || [];
 
     const cached = req.user.cachedGitHub || {};
     cached.repo = data;
