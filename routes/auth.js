@@ -84,19 +84,21 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// DELETE /api/auth/me — Delete current user account
-router.delete('/me', auth, async (req, res) => {
+// DELETE /api/auth/account — Delete currently logged in user
+router.delete('/account', auth, async (req, res) => {
   try {
-    const userId = req.user._id;
-    // Delete all logs for user
     const DailyLog = require('../models/DailyLog');
-    await DailyLog.deleteMany({ userId });
-    // Delete user
-    await User.findByIdAndDelete(userId);
-    res.json({ message: 'Account deleted successfully' });
+    
+    // 1. Delete all user's daily logs
+    await DailyLog.deleteMany({ userId: req.user._id });
+    
+    // 2. Delete the user
+    await User.findByIdAndDelete(req.user._id);
+    
+    res.json({ message: 'Account deleted successfully.' });
   } catch (error) {
-    console.error('Account deletion error:', error);
-    res.status(500).json({ error: 'Server error deleting account.' });
+    console.error('Delete account error:', error);
+    res.status(500).json({ error: 'Server error while deleting account.' });
   }
 });
 

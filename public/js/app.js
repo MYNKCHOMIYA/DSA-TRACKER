@@ -773,34 +773,6 @@ async function saveSettings() {
   }
 }
 
-async function deleteAccount() {
-  if (!confirm("Are you absolutely sure you want to delete your account? This action cannot be undone and all your progress will be permanently lost.")) {
-    return;
-  }
-  
-  const btn = document.getElementById("deleteAccountBtn");
-  if (btn) btn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;border-bottom-color:#ff4d4d;margin-right:8px;"></span> Deleting...';
-  
-  try {
-    const res = await fetch("/api/auth/me", {
-      method: "DELETE",
-      headers: getAuthHeaders()
-    });
-    
-    if (res.ok) {
-      localStorage.removeItem("dsa_tracker_token");
-      window.location.href = "/index.html";
-    } else {
-      const data = await res.json();
-      showToast(data.error || "Failed to delete account", "error");
-      if (btn) btn.innerHTML = 'Delete Account';
-    }
-  } catch (err) {
-    showToast("Network error. Try again.", "error");
-    if (btn) btn.innerHTML = 'Delete Account';
-  }
-}
-
 // Close modals on overlay click
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("modal-overlay")) {
@@ -907,8 +879,28 @@ function timeAgo(date) {
   if (mins < 1) return "just now";
   if (mins < 60) return `${mins}m ago`;
   if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
+  if (days < 30) return `${days}d ago`;
   return formatShortDate(date);
+}
+
+// ── Account Deletion ──
+async function deleteAccount() {
+  if (confirm("Are you absolutely sure you want to delete your account? This will permanently erase all your progress logs and settings. This cannot be undone.")) {
+    try {
+      const res = await fetch("/api/auth/account", {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+      if (res.ok) {
+        localStorage.removeItem("dsa_token");
+        window.location.href = "/index.html";
+      } else {
+        showToast("Failed to delete account.", "error");
+      }
+    } catch (err) {
+      showToast("Error deleting account.", "error");
+    }
+  }
 }
 
 function escapeHtml(str) {
