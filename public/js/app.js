@@ -184,8 +184,8 @@ function renderStatsCards() {
     }
   });
 
-  // Total question is sum of previous + today
-  const totalSolved = previousSolved + todayDone;
+  // Total question is sum of manual count + previous logs + today
+  const totalSolved = (userSettings.manualSolvedCount || 0) + previousSolved + todayDone;
 
   // Streak comes from LeetCode
   const streak = leetcodeData.calendar?.streak || 0;
@@ -308,7 +308,7 @@ function renderProjection() {
       }
     });
   }
-  const totalSolved = previousSolved + todayDone;
+  const totalSolved = (userSettings.manualSolvedCount || 0) + previousSolved + todayDone;
 
   const sheetTotal = userSettings.totalSheetProblems || 474;
 
