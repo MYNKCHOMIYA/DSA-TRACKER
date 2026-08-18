@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema({
   targetDate: { type: Date, default: null },
   totalSheetProblems: { type: Number, default: 474 },
   manualSolvedCount: { type: Number, default: 0 },
+  striverBreakdown: { type: Map, of: Number, default: {} },
 
   // State
   onboardingComplete: { type: Boolean, default: false },

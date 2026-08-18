@@ -421,7 +421,23 @@
       <div class="two-col">
         <!-- Striver Categories -->
         <div class="categories-section animate-in">
-          <h3 style="margin-bottom: 4px">Striver A2Z Breakdown</h3>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 4px;
+            "
+          >
+            <h3 style="margin: 0">Striver A2Z Breakdown</h3>
+            <button
+              class="nav-btn"
+              style="padding: 4px 10px; font-size: 11px"
+              onclick="openStriverModal()"
+            >
+              <span class="nav-btn-dot pink"></span> Edit
+            </button>
+          </div>
           <p class="chart-sub" style="margin-bottom: 16px">
             Progress per category
           </p>
@@ -586,6 +602,41 @@
             onclick="saveDetailedLog()"
           >
             Save Log
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Striver Breakdown Edit Modal -->
+    <div class="modal-overlay log-modal" id="striverModal">
+      <div class="modal" style="max-height: 90vh; overflow-y: auto">
+        <h2>Edit Striver Breakdown</h2>
+        <p class="chart-sub" style="margin-bottom: 16px">
+          Manually track questions solved for each topic.
+        </p>
+        <div id="striverModalContent">
+          <!-- Filled dynamically by JS -->
+        </div>
+        <div
+          class="modal-actions"
+          style="
+            margin-top: 24px;
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-card);
+            padding-top: 12px;
+            border-top: 1px solid var(--glass-border);
+          "
+        >
+          <button class="btn btn-secondary" onclick="closeStriverModal()">
+            Cancel
+          </button>
+          <button
+            class="btn btn-primary"
+            style="width: auto"
+            onclick="saveStriverBreakdown()"
+          >
+            Save Breakdown
           </button>
         </div>
       </div>

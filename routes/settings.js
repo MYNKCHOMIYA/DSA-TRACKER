@@ -18,6 +18,7 @@ router.get('/', auth, async (req, res) => {
       githubStriverRepo: user.githubStriverRepo,
       githubLeetcodeRepo: user.githubLeetcodeRepo,
       onboardingComplete: user.onboardingComplete,
+      striverBreakdown: user.striverBreakdown || {},
     });
   } catch (error) {
     res.status(500).json({ error: 'Server error.' });
@@ -30,7 +31,7 @@ router.put('/', auth, async (req, res) => {
     const allowedFields = [
       'dailyTarget', 'startDate', 'targetDate', 'totalSheetProblems',
       'manualSolvedCount', 'leetcodeUsername', 'githubUsername',
-      'githubStriverRepo', 'githubLeetcodeRepo', 'name',
+      'githubStriverRepo', 'githubLeetcodeRepo', 'name', 'striverBreakdown'
     ];
 
     const updates = {};
