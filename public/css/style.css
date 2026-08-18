@@ -6,41 +6,41 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap");
 
 :root {
-  --bg-primary: #252525;
-  --bg-secondary: #202020;
-  --bg-card: rgba(84, 50, 76, 0.4);
-  --bg-card-hover: rgba(84, 50, 76, 0.65);
-  --bg-input: rgba(244, 244, 244, 0.05);
-  --bg-input-focus: rgba(244, 244, 244, 0.1);
-  --glass-border: rgba(244, 244, 244, 0.08);
-  --glass-border-hover: rgba(244, 244, 244, 0.18);
+  --bg-primary: #211D1C;
+  --bg-secondary: #1a1716;
+  --bg-card: rgba(0, 33, 71, 0.85);
+  --bg-card-hover: rgba(0, 33, 71, 1);
+  --bg-input: rgba(242, 240, 240, 0.05);
+  --bg-input-focus: rgba(242, 240, 240, 0.1);
+  --glass-border: rgba(185, 214, 242, 0.15);
+  --glass-border-hover: rgba(185, 214, 242, 0.3);
   --glass-blur: blur(28px);
   
-  --text-primary: #F4F4F4;
-  --text-secondary: #c5b9c1;
-  --text-muted: #948690;
+  --text-primary: #F2F0F0;
+  --text-secondary: #E4F0EF;
+  --text-muted: #8a99a8;
   
-  --accent-pink: #7A3E54;
-  --accent-blue: #54324C;
-  --accent-gold: #9f657a;
-  --accent-green: #678d6b;
-  --accent-cyan: #54324C;
-  --accent-red: #7A3E54;
-  --accent-orange: #9f657a;
+  --accent-pink: #994636;
+  --accent-blue: #B9D6F2;
+  --accent-gold: #CBA135;
+  --accent-green: #4a7c59;
+  --accent-cyan: #B9D6F2;
+  --accent-red: #994636;
+  --accent-orange: #CBA135;
   
-  --glow-pink: rgba(122, 62, 84, 0.35);
-  --glow-blue: rgba(84, 50, 76, 0.3);
-  --glow-gold: rgba(159, 101, 122, 0.3);
+  --glow-pink: rgba(153, 70, 54, 0.4);
+  --glow-blue: rgba(185, 214, 242, 0.3);
+  --glow-gold: rgba(203, 161, 53, 0.3);
   
-  --gradient-primary: linear-gradient(135deg, #7A3E54 0%, #54324C 100%);
-  --gradient-fire: linear-gradient(135deg, #7A3E54 0%, #9f657a 100%);
-  --gradient-blue: linear-gradient(135deg, #54324C 0%, #7A3E54 100%);
-  --gradient-success: linear-gradient(135deg, #678d6b 0%, #54324C 100%);
-  --gradient-bg: #252525;
+  --gradient-primary: linear-gradient(135deg, #994636 0%, #B9D6F2 100%);
+  --gradient-fire: linear-gradient(135deg, #994636 0%, #CBA135 100%);
+  --gradient-blue: linear-gradient(135deg, #B9D6F2 0%, #002147 100%);
+  --gradient-success: linear-gradient(135deg, #4a7c59 0%, #B9D6F2 100%);
+  --gradient-bg: #211D1C;
   
-  --status-ahead: #678d6b;
-  --status-behind: #7A3E54;
-  --status-ontrack: #9f657a;
+  --status-ahead: #4a7c59;
+  --status-behind: #994636;
+  --status-ontrack: #CBA135;
   
   --radius-xs: 6px;
   --radius-sm: 10px;
@@ -50,11 +50,11 @@
   --radius-2xl: 32px;
   --radius-full: 9999px;
   
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
-  --shadow-glow-pink: 0 0 30px rgba(122, 62, 84, 0.3);
-  --shadow-glow-blue: 0 0 30px rgba(84, 50, 76, 0.25);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --shadow-glow-pink: 0 0 30px rgba(153, 70, 54, 0.3);
+  --shadow-glow-blue: 0 0 30px rgba(185, 214, 242, 0.25);
   
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 280ms cubic-bezier(0.4, 0, 0.2, 1);
