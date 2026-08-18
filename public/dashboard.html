@@ -34,6 +34,42 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   </head>
   <body>
+    <!-- Global Loading Overlay -->
+    <div
+      id="globalLoader"
+      style="
+        position: fixed;
+        inset: 0;
+        background: var(--bg-dark);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.4s ease;
+      "
+    >
+      <div
+        class="loader"
+        style="
+          width: 48px;
+          height: 48px;
+          border-width: 4px;
+          border-bottom-color: var(--accent-pink);
+        "
+      ></div>
+      <p
+        style="
+          margin-top: 16px;
+          color: var(--text-muted);
+          font-size: 14px;
+          animation: pulse 1.5s infinite;
+        "
+      >
+        Synchronizing Data...
+      </p>
+    </div>
+
     <canvas id="particles-canvas" aria-hidden="true"></canvas>
     <div id="cursor-spotlight"></div>
     <!-- Navigation -->
@@ -278,7 +314,7 @@
             </button>
           </div>
         </div>
-        <div class="chart-container" style="height: 320px; margin-bottom: 16px">
+        <div class="chart-container" style="height: 480px; margin-bottom: 16px">
           <canvas id="projectionChart"></canvas>
         </div>
         <!-- Zoom Slider -->

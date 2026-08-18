@@ -44,6 +44,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Render everything
     renderDashboard();
+
+    // Hide loader
+    const loader = document.getElementById("globalLoader");
+    if (loader) {
+      loader.style.opacity = "0";
+      setTimeout(() => (loader.style.display = "none"), 400);
+    }
   } catch (err) {
     console.error("Init error:", err);
     showToast("Error loading dashboard. Please refresh.", "error");
@@ -185,7 +192,8 @@ function renderStatsCards() {
   });
 
   // Total question is sum of manual count + previous logs + today
-  const totalSolved = (userSettings.manualSolvedCount || 0) + previousSolved + todayDone;
+  const totalSolved =
+    (userSettings.manualSolvedCount || 0) + previousSolved + todayDone;
 
   // Streak comes from LeetCode
   const streak = leetcodeData.calendar?.streak || 0;
@@ -308,7 +316,8 @@ function renderProjection() {
       }
     });
   }
-  const totalSolved = (userSettings.manualSolvedCount || 0) + previousSolved + todayDone;
+  const totalSolved =
+    (userSettings.manualSolvedCount || 0) + previousSolved + todayDone;
 
   const sheetTotal = userSettings.totalSheetProblems || 474;
 
@@ -651,7 +660,8 @@ async function saveTodayLog() {
 
     todayLog.questionsDone = count;
     updateCircularProgress(count, userSettings.dailyTarget || 5);
-    showToast("Progress saved!", "success");
+    showToast("Progress saved! Refreshing...", "success");
+    await refreshAllData();
   } catch (err) {
     showToast("Failed to save. Try again.", "error");
   }
