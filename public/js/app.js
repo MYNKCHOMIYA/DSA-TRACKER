@@ -195,8 +195,32 @@ function renderStatsCards() {
   const totalSolved =
     (userSettings.manualSolvedCount || 0) + previousSolved + todayDone;
 
-  // Streak comes from LeetCode
-  const streak = leetcodeData.calendar?.streak || 0;
+  // Calculate current streak accurately from submission calendar
+  let streak = 0;
+  try {
+    if (leetcodeData.calendar?.submissionCalendar) {
+      let cal = leetcodeData.calendar.submissionCalendar;
+      if (typeof cal === 'string') cal = JSON.parse(cal);
+      
+      const now = new Date();
+      // LeetCode resets at UTC midnight
+      const utcMidnight = Math.floor(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) / 1000);
+      
+      let currentCheck = utcMidnight;
+      if (!cal[currentCheck]) {
+        currentCheck -= 86400; // if no submission today, check from yesterday
+      }
+      
+      while (cal[currentCheck]) {
+        streak++;
+        currentCheck -= 86400;
+      }
+    }
+  } catch (err) {
+    console.error("Error calculating streak:", err);
+    streak = leetcodeData.calendar?.streak || 0; // fallback
+  }
+
   document.getElementById("streakValue").textContent = streak;
   document.getElementById("streakSub").textContent = "day LeetCode streak";
 
